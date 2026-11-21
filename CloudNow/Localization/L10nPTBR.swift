@@ -202,6 +202,8 @@ enum L10nPTBR {
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",
+        "share_sound": "Share Sound",
+        "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
         "microphone_description": "Ativa o bate-papo por voz via headset Bluetooth ou AirPods conectados. Requer permissão de microfone.",
         "microphone_permission_denied_message": "O acesso ao microfone está desativado para o CloudNow. Ative-o em Ajustes da Apple TV > Geral > Privacidade e Segurança > Microfone.",
         "open_settings": "Abrir Ajustes",

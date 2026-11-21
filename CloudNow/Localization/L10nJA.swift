@@ -176,6 +176,8 @@ enum L10nJA {
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",
+        "share_sound": "Share Sound",
+        "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
         "microphone_description": "接続済みの Bluetooth ヘッドセットまたは AirPods でボイスチャットを有効にします。マイクの許可が必要です。",
         "microphone_permission_denied_message": "CloudNow のマイクへのアクセスが無効になっています。Apple TV の「設定」>「一般」>「プライバシーとセキュリティ」>「マイク」で有効にしてください。",
         "open_settings": "設定を開く",

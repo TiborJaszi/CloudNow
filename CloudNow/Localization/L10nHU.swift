@@ -179,6 +179,8 @@ enum L10nHU {
         "share_screen": "Képernyő megosztása",
         "share_screen_description": "Másodpercenként néhány képkockát küld a streamből erre a címre a hálózatodon, pl. hogy telefonon nézhesd a játékot. Csak a helyi hálózaton működik.",
         "share_screen_address": "Cím",
+        "share_sound": "Hang megosztása",
+        "share_sound_description": "Lejátszás közben elküldi a stream hangját erre a címre a hálózatodon (WebSocket), pl. egy eszköznek, amely figyeli a játékot. Csak a helyi hálózaton működik.",
         "microphone_description": "Engedélyezi a hangcsevegést csatlakoztatott Bluetooth-fejhallgatón vagy AirPods-on keresztül. Mikrofonengedély szükséges.",
         "microphone_permission_denied_message": "A CloudNow mikrofon-hozzáférése le van tiltva. Engedélyezd az Apple TV Beállítások > Általános > Adatvédelem és biztonság > Mikrofon menüpontjában.",
         "open_settings": "Beállítások megnyitása",

@@ -175,6 +175,8 @@ enum L10nHI {
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",
+        "share_sound": "Share Sound",
+        "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
         "microphone_description": "कनेक्टेड Bluetooth हेडसेट या AirPods के जरिए voice chat सक्षम करता है। माइक्रोफ़ोन अनुमति चाहिए।",
         "microphone_permission_denied_message": "CloudNow के लिए माइक्रोफ़ोन एक्सेस बंद है। इसे Apple TV सेटिंग्स > सामान्य > गोपनीयता और सुरक्षा > माइक्रोफ़ोन में सक्षम करें।",
         "open_settings": "सेटिंग्स खोलें",

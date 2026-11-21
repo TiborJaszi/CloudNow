@@ -175,6 +175,8 @@ enum L10nFI {
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",
+        "share_sound": "Share Sound",
+        "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
         "microphone_description": "Ottaa puhechatin käyttöön liitetyn Bluetooth-kuulokkeen tai AirPodsien kautta. Vaatii mikrofonioikeuden.",
         "microphone_permission_denied_message": "CloudNow'n mikrofonin käyttöoikeus on poistettu käytöstä. Ota se käyttöön kohdassa Apple TV:n Asetukset > Yleiset > Tietosuoja ja suojaus > Mikrofoni.",
         "open_settings": "Avaa Asetukset",

@@ -225,6 +225,31 @@ struct CloudNowScreenShareSettingsSection: View {
     }
 }
 
+/// App-wide (`CloudSoundShare`); applies right away, also during a stream.
+struct CloudNowSoundShareSettingsSection: View {
+    @AppStorage(CloudSoundShare.enabledDefaultsKey) private var isEnabled = false
+    @AppStorage(CloudSoundShare.addressDefaultsKey) private var address = CloudSoundShare.defaultAddress
+
+    var body: some View {
+        Section(L10n.text("share_sound")) {
+            Toggle(isOn: $isEnabled) {
+                CloudNowSettingLabel(
+                    title: L10n.text("share_sound"),
+                    description: L10n.text("share_sound_description")
+                )
+            }
+            .accessibilityIdentifier("settings.soundShare.enabled")
+            if isEnabled {
+                TextField(L10n.text("share_screen_address"), text: $address)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .keyboardType(.URL)
+                    .accessibilityIdentifier("settings.soundShare.address")
+            }
+        }
+    }
+}
+
 struct CloudNowDiagnosticsSettingsSection: View {
     @Binding var diagnosticsEnabled: Bool
     @Binding var enableRtcEventLog: Bool
@@ -1181,6 +1206,8 @@ struct SettingsView: View {
                 CloudNowAirPlayAudioSettingsSection()
 
                 CloudNowScreenShareSettingsSection()
+
+                CloudNowSoundShareSettingsSection()
 
                 CloudNowControllerSettingsSection(
                     rumbleEnabled: $vm.streamSettings.rumbleEnabled,
