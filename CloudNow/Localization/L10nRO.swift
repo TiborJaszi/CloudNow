@@ -200,6 +200,8 @@ enum L10nRO {
         "clear_use_automatic_routing": "Șterge - folosește rutare automată",
         "microphone": "Microfon",
         "use_microphone": "Folosește microfonul",
+        "airplay_audio": "Audio AirPlay",
+        "airplay_audio_description": "Permite tvOS să trimită sunetul streamului către boxe AirPlay. Adaugă aproximativ 2 s de întârziere audio și oprește microfonul. Se aplică de la următorul stream.",
         "microphone_description": "Activează chatul vocal printr-un headset Bluetooth sau AirPods conectate. Necesită permisiunea pentru microfon.",
         "microphone_permission_denied_message": "Accesul la microfon este dezactivat pentru CloudNow. Activează-l în Configurări Apple TV > General > Confidențialitate și securitate > Microfon.",
         "open_settings": "Deschide Configurări",

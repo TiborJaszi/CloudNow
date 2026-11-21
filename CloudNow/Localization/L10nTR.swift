@@ -200,6 +200,8 @@ enum L10nTR {
         "clear_use_automatic_routing": "Temizle - otomatik yönlendirmeyi kullan",
         "microphone": "Mikrofon",
         "use_microphone": "Mikrofonu kullan",
+        "airplay_audio": "AirPlay Sesi",
+        "airplay_audio_description": "tvOS'un yayın sesini AirPlay hoparlörlerine göndermesine izin verir. Yaklaşık 2 sn ses gecikmesi ekler ve mikrofonu kapatır. Bir sonraki yayından itibaren geçerlidir.",
         "microphone_description": "Bağlı Bluetooth kulaklık veya AirPods üzerinden sesli sohbeti etkinleştirir. Mikrofon izni gerekir.",
         "microphone_permission_denied_message": "CloudNow için mikrofon erişimi devre dışı. Apple TV Ayarları > Genel > Gizlilik ve Güvenlik > Mikrofon bölümünden etkinleştirin.",
         "open_settings": "Ayarları Aç",

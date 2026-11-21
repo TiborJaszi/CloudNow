@@ -200,6 +200,8 @@ enum L10nMS {
         "clear_use_automatic_routing": "Kosongkan - gunakan penghalaan automatik",
         "microphone": "Mikrofon",
         "use_microphone": "Gunakan mikrofon",
+        "airplay_audio": "Audio AirPlay",
+        "airplay_audio_description": "Membenarkan tvOS menghantar bunyi strim ke pembesar suara AirPlay. Menambah kelewatan audio kira-kira 2 saat dan mematikan mikrofon. Berkuat kuasa mulai strim seterusnya.",
         "microphone_description": "Mendayakan sembang suara melalui fon kepala Bluetooth atau AirPods yang disambungkan. Memerlukan kebenaran mikrofon.",
         "microphone_permission_denied_message": "Akses mikrofon dinyahdayakan untuk CloudNow. Dayakannya dalam Tetapan Apple TV > Umum > Privasi & Keselamatan > Mikrofon.",
         "open_settings": "Buka Tetapan",

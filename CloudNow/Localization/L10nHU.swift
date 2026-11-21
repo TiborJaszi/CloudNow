@@ -174,6 +174,8 @@ enum L10nHU {
         "clear_use_automatic_routing": "Törlés - automatikus útválasztás használata",
         "microphone": "Mikrofon",
         "use_microphone": "Mikrofon használata",
+        "airplay_audio": "AirPlay-hang",
+        "airplay_audio_description": "A tvOS AirPlay-hangszórókra is küldheti a stream hangját. Kb. 2 mp hangkésést okoz, és kikapcsolja a mikrofont. A következő streamtől érvényes.",
         "microphone_description": "Engedélyezi a hangcsevegést csatlakoztatott Bluetooth-fejhallgatón vagy AirPods-on keresztül. Mikrofonengedély szükséges.",
         "microphone_permission_denied_message": "A CloudNow mikrofon-hozzáférése le van tiltva. Engedélyezd az Apple TV Beállítások > Általános > Adatvédelem és biztonság > Mikrofon menüpontjában.",
         "open_settings": "Beállítások megnyitása",

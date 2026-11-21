@@ -170,6 +170,8 @@ enum L10nDA {
         "clear_use_automatic_routing": "Ryd - brug automatisk routing",
         "microphone": "Mikrofon",
         "use_microphone": "Brug mikrofon",
+        "airplay_audio": "AirPlay-lyd",
+        "airplay_audio_description": "Lader tvOS sende streamens lyd til AirPlay-højttalere. Giver ca. 2 s lydforsinkelse og slår mikrofonen fra. Gælder fra næste stream.",
         "microphone_description": "Aktiverer stemmechat via et tilsluttet Bluetooth-headset eller AirPods. Kræver mikrofonadgang.",
         "microphone_permission_denied_message": "Mikrofonadgang er deaktiveret for CloudNow. Aktivér den i Apple TV-indstillinger > Generelt > Anonymitet og sikkerhed > Mikrofon.",
         "open_settings": "Åbn Indstillinger",

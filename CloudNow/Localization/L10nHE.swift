@@ -170,6 +170,8 @@ enum L10nHE {
         "clear_use_automatic_routing": "נקה - השתמש בניתוב אוטומטי",
         "microphone": "מיקרופון",
         "use_microphone": "השתמש במיקרופון",
+        "airplay_audio": "שמע AirPlay",
+        "airplay_audio_description": "מאפשר ל-tvOS לשלוח את צליל הסטרים לרמקולי AirPlay. מוסיף כ-2 שניות השהיית שמע ומכבה את המיקרופון. חל מהסטרים הבא.",
         "microphone_description": "מפעיל צ'אט קולי דרך אוזניית Bluetooth או AirPods מחוברות. דורש הרשאת מיקרופון.",
         "microphone_permission_denied_message": "הגישה למיקרופון מושבתת עבור CloudNow. יש להפעיל אותה דרך הגדרות Apple TV > כללי > פרטיות ואבטחה > מיקרופון.",
         "open_settings": "פתיחת הגדרות",

@@ -200,6 +200,8 @@ enum L10nTH {
         "clear_use_automatic_routing": "ล้าง - ใช้การกำหนดเส้นทางอัตโนมัติ",
         "microphone": "ไมโครโฟน",
         "use_microphone": "ใช้ไมโครโฟน",
+        "airplay_audio": "เสียง AirPlay",
+        "airplay_audio_description": "ให้ tvOS ส่งเสียงของสตรีมไปยังลำโพง AirPlay ได้ เพิ่มความหน่วงเสียงประมาณ 2 วินาทีและปิดไมโครโฟน มีผลตั้งแต่สตรีมถัดไป",
         "microphone_description": "เปิดใช้งานแชตเสียงผ่านหูฟัง Bluetooth หรือ AirPods ที่เชื่อมต่อ ต้องขอสิทธิ์ไมโครโฟน",
         "microphone_permission_denied_message": "CloudNow ถูกปิดกั้นไม่ให้เข้าถึงไมโครโฟน เปิดใช้ได้ในการตั้งค่า Apple TV > ทั่วไป > ความเป็นส่วนตัวและความปลอดภัย > ไมโครโฟน",
         "open_settings": "เปิดการตั้งค่า",

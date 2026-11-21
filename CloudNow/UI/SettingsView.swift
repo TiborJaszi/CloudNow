@@ -179,6 +179,27 @@ private struct CloudNowSettingLabel: View {
     }
 }
 
+/// App-wide, like the audio session it controls (`CloudPlaybackAudioSession`); applies
+/// from the next stream.
+struct CloudNowAirPlayAudioSettingsSection: View {
+    var isDisabled = false
+
+    @AppStorage(CloudPlaybackAudioSession.airPlayDefaultsKey) private var isEnabled = false
+
+    var body: some View {
+        Section(L10n.text("airplay_audio")) {
+            Toggle(isOn: $isEnabled) {
+                CloudNowSettingLabel(
+                    title: L10n.text("airplay_audio"),
+                    description: L10n.text("airplay_audio_description")
+                )
+            }
+            .accessibilityIdentifier("settings.audio.airplay")
+        }
+        .disabled(isDisabled)
+    }
+}
+
 struct CloudNowDiagnosticsSettingsSection: View {
     @Binding var diagnosticsEnabled: Bool
     @Binding var enableRtcEventLog: Bool
@@ -1131,6 +1152,8 @@ struct SettingsView: View {
                 CloudNowMicrophoneSettingsSection(
                     isEnabled: $vm.streamSettings.micEnabled
                 )
+
+                CloudNowAirPlayAudioSettingsSection()
 
                 CloudNowControllerSettingsSection(
                     rumbleEnabled: $vm.streamSettings.rumbleEnabled,

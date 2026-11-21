@@ -167,6 +167,8 @@ enum L10nDE {
         "clear_use_automatic_routing": "Löschen - automatisches Routing verwenden",
         "microphone": "Mikrofon",
         "use_microphone": "Mikrofon verwenden",
+        "airplay_audio": "AirPlay-Audio",
+        "airplay_audio_description": "Erlaubt tvOS, den Ton des Streams an AirPlay-Lautsprecher zu senden. Verzögert den Ton um etwa 2 s und schaltet das Mikrofon aus. Gilt ab dem nächsten Stream.",
         "microphone_description": "Aktiviert Sprachchat über ein verbundenes Bluetooth-Headset oder AirPods. Erfordert Mikrofonberechtigung.",
         "microphone_permission_denied_message": "Der Mikrofonzugriff ist für CloudNow deaktiviert. Aktiviere ihn unter Apple TV-Einstellungen > Allgemein > Datenschutz & Sicherheit > Mikrofon.",
         "open_settings": "Einstellungen öffnen",

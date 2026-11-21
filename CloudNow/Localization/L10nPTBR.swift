@@ -197,6 +197,8 @@ enum L10nPTBR {
         "clear_use_automatic_routing": "Limpar - usar roteamento automático",
         "microphone": "Microfone",
         "use_microphone": "Usar microfone",
+        "airplay_audio": "Áudio AirPlay",
+        "airplay_audio_description": "Permite que o tvOS envie o som do stream para alto-falantes AirPlay. Adiciona cerca de 2 s de atraso no áudio e desliga o microfone. Vale a partir do próximo stream.",
         "microphone_description": "Ativa o bate-papo por voz via headset Bluetooth ou AirPods conectados. Requer permissão de microfone.",
         "microphone_permission_denied_message": "O acesso ao microfone está desativado para o CloudNow. Ative-o em Ajustes da Apple TV > Geral > Privacidade e Segurança > Microfone.",
         "open_settings": "Abrir Ajustes",

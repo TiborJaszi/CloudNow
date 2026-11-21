@@ -200,6 +200,8 @@ enum L10nEN {
         "clear_use_automatic_routing": "Clear - use automatic routing",
         "microphone": "Microphone",
         "use_microphone": "Use Microphone",
+        "airplay_audio": "AirPlay Audio",
+        "airplay_audio_description": "Lets tvOS send the stream's sound to AirPlay speakers. Adds about 2 s of audio delay and turns the microphone off. Applies from the next stream.",
         "microphone_description": "Enables voice chat via a connected Bluetooth headset or AirPods. Requires microphone permission.",
         "controller": "Controller",
         "deadzone": "Deadzone",

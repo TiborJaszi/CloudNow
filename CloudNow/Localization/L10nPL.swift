@@ -200,6 +200,8 @@ enum L10nPL {
         "clear_use_automatic_routing": "Wyczyść - użyj automatycznego trasowania",
         "microphone": "Mikrofon",
         "use_microphone": "Użyj mikrofonu",
+        "airplay_audio": "Dźwięk AirPlay",
+        "airplay_audio_description": "Pozwala tvOS wysyłać dźwięk strumienia do głośników AirPlay. Dodaje ok. 2 s opóźnienia dźwięku i wyłącza mikrofon. Działa od następnego strumienia.",
         "microphone_description": "Włącza czat głosowy przez podłączony zestaw Bluetooth lub AirPods. Wymaga zgody na mikrofon.",
         "microphone_permission_denied_message": "Dostęp do mikrofonu jest wyłączony dla CloudNow. Włącz go w Ustawienia Apple TV > Ogólne > Prywatność i ochrona > Mikrofon.",
         "open_settings": "Otwórz ustawienia",

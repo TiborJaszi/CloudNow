@@ -170,6 +170,8 @@ enum L10nAR {
         "clear_use_automatic_routing": "مسح - استخدام التوجيه التلقائي",
         "microphone": "الميكروفون",
         "use_microphone": "استخدام الميكروفون",
+        "airplay_audio": "صوت AirPlay",
+        "airplay_audio_description": "يتيح لـ tvOS إرسال صوت البث إلى سماعات AirPlay. يضيف تأخيرًا صوتيًا بنحو ثانيتين ويوقف الميكروفون. يُطبَّق من البث التالي.",
         "microphone_description": "يُفعّل الدردشة الصوتية عبر سماعة Bluetooth أو AirPods متصلة. يتطلب إذن الميكروفون.",
         "microphone_permission_denied_message": "تم تعطيل وصول CloudNow إلى الميكروفون. قم بتمكينه في إعدادات Apple TV > عام > الخصوصية والأمان > الميكروفون.",
         "open_settings": "فتح الإعدادات",

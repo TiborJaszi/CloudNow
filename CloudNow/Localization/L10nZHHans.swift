@@ -197,6 +197,8 @@ enum L10nZHHans {
         "clear_use_automatic_routing": "清除 - 使用自动路由",
         "microphone": "麦克风",
         "use_microphone": "使用麦克风",
+        "airplay_audio": "AirPlay 音频",
+        "airplay_audio_description": "允许 tvOS 将串流声音发送到 AirPlay 扬声器。会增加约 2 秒音频延迟并关闭麦克风。从下一次串流起生效。",
         "microphone_description": "通过已连接的蓝牙耳机或 AirPods 启用语音聊天。需要麦克风权限。",
         "microphone_permission_denied_message": "CloudNow 的麦克风访问权限已关闭。请前往 Apple TV“设置”>“通用”>“隐私与安全性”>“麦克风”将其开启。",
         "open_settings": "打开设置",

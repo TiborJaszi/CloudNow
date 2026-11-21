@@ -4049,6 +4049,8 @@ private struct XboxSettingsView: View {
                     )
                 }
 
+                CloudNowAirPlayAudioSettingsSection(isDisabled: isBusy)
+
                 if supportsNetworkTest {
                     Section(L10n.text("server_location")) {
                         Button {

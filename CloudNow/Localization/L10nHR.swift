@@ -174,6 +174,8 @@ enum L10nHR {
         "clear_use_automatic_routing": "Očisti - koristi automatsko usmjeravanje",
         "microphone": "Mikrofon",
         "use_microphone": "Koristi mikrofon",
+        "airplay_audio": "AirPlay zvuk",
+        "airplay_audio_description": "Omogućuje tvOS-u slanje zvuka streama na AirPlay zvučnike. Dodaje oko 2 s kašnjenja zvuka i isključuje mikrofon. Primjenjuje se od sljedećeg streama.",
         "microphone_description": "Omogućuje glasovni chat putem povezanih Bluetooth slušalica ili AirPods slušalica. Zahtijeva dopuštenje za mikrofon.",
         "microphone_permission_denied_message": "Pristup mikrofonu onemogućen je za CloudNow. Omogućite ga u Postavke Apple TV-a > Općenito > Privatnost i sigurnost > Mikrofon.",
         "open_settings": "Otvori postavke",

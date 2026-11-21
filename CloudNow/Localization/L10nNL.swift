@@ -200,6 +200,8 @@ enum L10nNL {
         "clear_use_automatic_routing": "Wissen - automatische routering gebruiken",
         "microphone": "Microfoon",
         "use_microphone": "Microfoon gebruiken",
+        "airplay_audio": "AirPlay-audio",
+        "airplay_audio_description": "Laat tvOS het geluid van de stream naar AirPlay-speakers sturen. Geeft ongeveer 2 s audiovertraging en zet de microfoon uit. Geldt vanaf de volgende stream.",
         "microphone_description": "Schakelt voicechat in via een aangesloten Bluetooth-headset of AirPods. Vereist microfoontoestemming.",
         "microphone_permission_denied_message": "Microfoontoegang is uitgeschakeld voor CloudNow. Schakel deze in via Apple TV-instellingen > Algemeen > Privacy en beveiliging > Microfoon.",
         "open_settings": "Open Instellingen",

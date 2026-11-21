@@ -170,6 +170,8 @@ enum L10nFI {
         "clear_use_automatic_routing": "Tyhjennä - käytä automaattista reititystä",
         "microphone": "Mikrofoni",
         "use_microphone": "Käytä mikrofonia",
+        "airplay_audio": "AirPlay-ääni",
+        "airplay_audio_description": "Antaa tvOS:n lähettää striimin äänen AirPlay-kaiuttimiin. Lisää noin 2 s ääniviivettä ja sammuttaa mikrofonin. Koskee seuraavaa striimiä.",
         "microphone_description": "Ottaa puhechatin käyttöön liitetyn Bluetooth-kuulokkeen tai AirPodsien kautta. Vaatii mikrofonioikeuden.",
         "microphone_permission_denied_message": "CloudNow'n mikrofonin käyttöoikeus on poistettu käytöstä. Ota se käyttöön kohdassa Apple TV:n Asetukset > Yleiset > Tietosuoja ja suojaus > Mikrofoni.",
         "open_settings": "Avaa Asetukset",

@@ -171,6 +171,8 @@ enum L10nJA {
         "clear_use_automatic_routing": "クリア - 自動ルーティングを使用",
         "microphone": "マイク",
         "use_microphone": "マイクを使用",
+        "airplay_audio": "AirPlayオーディオ",
+        "airplay_audio_description": "tvOSがストリームの音声をAirPlayスピーカーに送れるようにします。音声に約2秒の遅延が加わり、マイクはオフになります。次のストリームから適用されます。",
         "microphone_description": "接続済みの Bluetooth ヘッドセットまたは AirPods でボイスチャットを有効にします。マイクの許可が必要です。",
         "microphone_permission_denied_message": "CloudNow のマイクへのアクセスが無効になっています。Apple TV の「設定」>「一般」>「プライバシーとセキュリティ」>「マイク」で有効にしてください。",
         "open_settings": "設定を開く",

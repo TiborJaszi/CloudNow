@@ -170,6 +170,8 @@ enum L10nCS {
         "clear_use_automatic_routing": "Vymazat - použít automatické směrování",
         "microphone": "Mikrofon",
         "use_microphone": "Použít mikrofon",
+        "airplay_audio": "Zvuk přes AirPlay",
+        "airplay_audio_description": "Umožní tvOS posílat zvuk streamu do reproduktorů AirPlay. Přidá asi 2 s zpoždění zvuku a vypne mikrofon. Platí od příštího streamu.",
         "microphone_description": "Povolí hlasový chat přes připojený Bluetooth headset nebo AirPods. Vyžaduje oprávnění k mikrofonu.",
         "microphone_permission_denied_message": "Přístup k mikrofonu je pro CloudNow zakázán. Povolte jej v Nastavení Apple TV > Obecné > Soukromí a zabezpečení > Mikrofon.",
         "open_settings": "Otevřít Nastavení",

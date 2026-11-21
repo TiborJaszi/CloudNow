@@ -934,7 +934,7 @@ final nonisolated class CloudAudioDevice: NSObject, @unchecked Sendable {
 
     @discardableResult
     private func restorePlaybackAudioSessionIfNeeded(_ session: AVAudioSession) -> Bool {
-        let categoryNeedsRestore = session.category != .playback || session.mode != .default
+        let categoryNeedsRestore = !CloudPlaybackAudioSession.isApplied(to: session)
         guard categoryNeedsRestore || playbackSessionActivationPending else { return true }
         playbackSessionActivationPending = true
 
@@ -942,7 +942,7 @@ final nonisolated class CloudAudioDevice: NSObject, @unchecked Sendable {
             if categoryNeedsRestore {
                 engine?.stop()
                 try session.setActive(false)
-                try session.setCategory(.playback, mode: .default, options: [])
+                try CloudPlaybackAudioSession.apply(to: session)
             }
             try session.setPreferredIOBufferDuration(0.01)
             try session.setActive(true)

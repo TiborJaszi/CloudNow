@@ -200,6 +200,8 @@ enum L10nSV {
         "clear_use_automatic_routing": "Rensa - använd automatisk routning",
         "microphone": "Mikrofon",
         "use_microphone": "Använd mikrofon",
+        "airplay_audio": "AirPlay-ljud",
+        "airplay_audio_description": "Låter tvOS skicka streamens ljud till AirPlay-högtalare. Ger cirka 2 s ljudfördröjning och stänger av mikrofonen. Gäller från nästa stream.",
         "microphone_description": "Aktiverar röstchatt via ett anslutet Bluetooth-headset eller AirPods. Kräver mikrofontillstånd.",
         "microphone_permission_denied_message": "Mikrofonåtkomst är avstängd för CloudNow. Aktivera den i Apple TV-inställningar > Allmänt > Integritet och säkerhet > Mikrofon.",
         "open_settings": "Öppna Inställningar",

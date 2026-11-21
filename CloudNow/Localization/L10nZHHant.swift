@@ -197,6 +197,8 @@ enum L10nZHHant {
         "clear_use_automatic_routing": "清除 - 使用自動路由",
         "microphone": "麥克風",
         "use_microphone": "使用麥克風",
+        "airplay_audio": "AirPlay 音訊",
+        "airplay_audio_description": "允許 tvOS 將串流聲音傳送到 AirPlay 揚聲器。會增加約 2 秒音訊延遲並關閉麥克風。從下一次串流起生效。",
         "microphone_description": "透過已連接的 Bluetooth 耳機或 AirPods 啟用語音聊天。需要麥克風權限。",
         "microphone_permission_denied_message": "CloudNow 的麥克風存取權已關閉。請前往 Apple TV「設定」>「一般」>「隱私權與安全性」>「麥克風」將其開啟。",
         "open_settings": "開啟設定",

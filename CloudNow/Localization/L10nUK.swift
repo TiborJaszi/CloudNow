@@ -200,6 +200,8 @@ enum L10nUK {
         "clear_use_automatic_routing": "Очистити - використовувати автоматичну маршрутизацію",
         "microphone": "Мікрофон",
         "use_microphone": "Використовувати мікрофон",
+        "airplay_audio": "Звук через AirPlay",
+        "airplay_audio_description": "Дозволяє tvOS виводити звук трансляції на колонки AirPlay. Додає близько 2 с затримки звуку й вимикає мікрофон. Діє з наступної трансляції.",
         "microphone_description": "Увімкнути голосовий чат через підключену Bluetooth-гарнітуру або AirPods. Потрібен дозвіл на мікрофон.",
         "microphone_permission_denied_message": "Доступ CloudNow до мікрофона вимкнено. Увімкніть його в меню «Параметри Apple TV > Загальні > Приватність і безпека > Мікрофон».",
         "open_settings": "Відкрити параметри",

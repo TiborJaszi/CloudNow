@@ -174,6 +174,8 @@ enum L10nID {
         "clear_use_automatic_routing": "Hapus - gunakan perutean otomatis",
         "microphone": "Mikrofon",
         "use_microphone": "Gunakan mikrofon",
+        "airplay_audio": "Audio AirPlay",
+        "airplay_audio_description": "Mengizinkan tvOS mengirim suara stream ke speaker AirPlay. Menambah jeda audio sekitar 2 detik dan mematikan mikrofon. Berlaku mulai stream berikutnya.",
         "microphone_description": "Mengaktifkan obrolan suara melalui headset Bluetooth atau AirPods yang tersambung. Membutuhkan izin mikrofon.",
         "microphone_permission_denied_message": "Akses mikrofon dinonaktifkan untuk CloudNow. Aktifkan di Pengaturan Apple TV > Umum > Privasi & Keamanan > Mikrofon.",
         "open_settings": "Buka Pengaturan",

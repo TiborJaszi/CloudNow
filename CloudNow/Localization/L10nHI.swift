@@ -170,6 +170,8 @@ enum L10nHI {
         "clear_use_automatic_routing": "साफ करें - ऑटोमैटिक रूटिंग का उपयोग करें",
         "microphone": "माइक्रोफ़ोन",
         "use_microphone": "माइक्रोफ़ोन का उपयोग करें",
+        "airplay_audio": "AirPlay ऑडियो",
+        "airplay_audio_description": "tvOS को स्ट्रीम की आवाज़ AirPlay स्पीकर पर भेजने देता है। लगभग 2 सेकंड की ऑडियो देरी जोड़ता है और माइक्रोफ़ोन बंद करता है। अगली स्ट्रीम से लागू।",
         "microphone_description": "कनेक्टेड Bluetooth हेडसेट या AirPods के जरिए voice chat सक्षम करता है। माइक्रोफ़ोन अनुमति चाहिए।",
         "microphone_permission_denied_message": "CloudNow के लिए माइक्रोफ़ोन एक्सेस बंद है। इसे Apple TV सेटिंग्स > सामान्य > गोपनीयता और सुरक्षा > माइक्रोफ़ोन में सक्षम करें।",
         "open_settings": "सेटिंग्स खोलें",

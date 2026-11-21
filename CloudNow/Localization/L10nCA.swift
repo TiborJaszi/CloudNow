@@ -170,6 +170,8 @@ enum L10nCA {
         "clear_use_automatic_routing": "Esborra - usa l'encaminament automàtic",
         "microphone": "Micròfon",
         "use_microphone": "Fes servir el micròfon",
+        "airplay_audio": "Àudio AirPlay",
+        "airplay_audio_description": "Permet que tvOS enviï el so del streaming a altaveus AirPlay. Afegeix uns 2 s de retard d'àudio i desactiva el micròfon. S'aplica des del proper streaming.",
         "microphone_description": "Activa el xat de veu mitjançant uns auriculars Bluetooth o uns AirPods connectats. Requereix permís del micròfon.",
         "microphone_permission_denied_message": "L'accés al micròfon està desactivat per a CloudNow. Activa'l a Configuració d'Apple TV > General > Privadesa i seguretat > Micròfon.",
         "open_settings": "Obre la configuració",

@@ -200,6 +200,8 @@ enum L10nSK {
         "clear_use_automatic_routing": "Vymazať - použiť automatické smerovanie",
         "microphone": "Mikrofón",
         "use_microphone": "Použiť mikrofón",
+        "airplay_audio": "Zvuk cez AirPlay",
+        "airplay_audio_description": "Umožní tvOS posielať zvuk streamu do reproduktorov AirPlay. Pridá asi 2 s oneskorenia zvuku a vypne mikrofón. Platí od ďalšieho streamu.",
         "microphone_description": "Povolí hlasový chat cez pripojený Bluetooth headset alebo AirPods. Vyžaduje povolenie mikrofónu.",
         "microphone_permission_denied_message": "Prístup k mikrofónu je pre CloudNow vypnutý. Povoľte ho v menu Nastavenia Apple TV > Všeobecné > Súkromie a bezpečnosť > Mikrofón.",
         "open_settings": "Otvoriť nastavenia",

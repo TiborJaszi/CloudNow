@@ -200,6 +200,8 @@ enum L10nNB {
         "clear_use_automatic_routing": "Tøm - bruk automatisk ruting",
         "microphone": "Mikrofon",
         "use_microphone": "Bruk mikrofon",
+        "airplay_audio": "AirPlay-lyd",
+        "airplay_audio_description": "Lar tvOS sende lyden fra strømmen til AirPlay-høyttalere. Gir omtrent 2 s lydforsinkelse og slår av mikrofonen. Gjelder fra neste strøm.",
         "microphone_description": "Aktiverer talchat via et tilkoblet Bluetooth-headset eller AirPods. Krever mikrofontillatelse.",
         "microphone_permission_denied_message": "Mikrofontilgang er deaktivert for CloudNow. Aktiver den i Apple TV-innstillinger > Generelt > Personvern og sikkerhet > Mikrofon.",
         "open_settings": "Åpne innstillinger",

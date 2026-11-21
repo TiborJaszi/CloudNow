@@ -200,6 +200,8 @@ enum L10nVI {
         "clear_use_automatic_routing": "Xóa - dùng định tuyến tự động",
         "microphone": "Micro",
         "use_microphone": "Dùng micro",
+        "airplay_audio": "Âm thanh AirPlay",
+        "airplay_audio_description": "Cho phép tvOS gửi âm thanh của luồng tới loa AirPlay. Thêm khoảng 2 giây trễ âm thanh và tắt micrô. Áp dụng từ luồng tiếp theo.",
         "microphone_description": "Bật chat thoại qua tai nghe Bluetooth hoặc AirPods đã kết nối. Cần quyền micro.",
         "microphone_permission_denied_message": "Quyền truy cập micrô của CloudNow đang bị tắt. Hãy bật trong Cài đặt Apple TV > Cài đặt chung > Quyền riêng tư & Bảo mật > Micrô.",
         "open_settings": "Mở Cài đặt",
