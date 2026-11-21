@@ -205,6 +205,8 @@ enum L10nUK {
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",
+        "share_sound": "Share Sound",
+        "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
         "microphone_description": "Увімкнути голосовий чат через підключену Bluetooth-гарнітуру або AirPods. Потрібен дозвіл на мікрофон.",
         "microphone_permission_denied_message": "Доступ CloudNow до мікрофона вимкнено. Увімкніть його в меню «Параметри Apple TV > Загальні > Приватність і безпека > Мікрофон».",
         "open_settings": "Відкрити параметри",

@@ -202,6 +202,8 @@ enum L10nZHHant {
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",
+        "share_sound": "Share Sound",
+        "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
         "microphone_description": "透過已連接的 Bluetooth 耳機或 AirPods 啟用語音聊天。需要麥克風權限。",
         "microphone_permission_denied_message": "CloudNow 的麥克風存取權已關閉。請前往 Apple TV「設定」>「一般」>「隱私權與安全性」>「麥克風」將其開啟。",
         "open_settings": "開啟設定",

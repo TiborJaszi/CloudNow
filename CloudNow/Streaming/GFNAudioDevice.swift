@@ -287,9 +287,14 @@ final nonisolated class CloudAudioDevice: NSObject, @unchecked Sendable {
 
         // Capture the pull block once; the render closure must not touch `self` state.
         let pullPlayoutData = delegate.getPlayoutData
+        let soundTap = CloudSoundShare.shared.makeTap(channels: channels)
         let source = AVAudioSourceNode(format: format) { _, timestamp, frameCount, outputData -> OSStatus in
             var flags = AudioUnitRenderActionFlags()
-            return pullPlayoutData(&flags, timestamp, 0, frameCount, outputData)
+            let status = pullPlayoutData(&flags, timestamp, 0, frameCount, outputData)
+            if status == noErr {
+                soundTap.write(outputData, frameCount: frameCount)
+            }
+            return status
         }
 
         engine.attach(source)
@@ -1115,6 +1120,7 @@ extension CloudAudioDevice: LKRTCAudioDevice {
             self.engineConfigurationObserver = nil
         }
         tearDownEngine()
+        CloudSoundShare.shared.stop()
         restorePlaybackAudioSessionIfNeeded(.sharedInstance())
         playoutInitializedFlag = false
         recordingInitializedFlag = false
@@ -1189,6 +1195,7 @@ extension CloudAudioDevice: LKRTCAudioDevice {
             }
         }
         playingFlag = true
+        CloudSoundShare.shared.start()
         if recordingFlag, sinkNode == nil, let delegate {
             scheduleRouteRecovery(trigger: "playoutStart", delegate: delegate)
         }
@@ -1197,6 +1204,7 @@ extension CloudAudioDevice: LKRTCAudioDevice {
 
     func stopPlayout() -> Bool {
         playingFlag = false
+        CloudSoundShare.shared.stop()
         if !recordingFlag {
             engine?.stop()
         }

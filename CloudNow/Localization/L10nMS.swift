@@ -205,6 +205,8 @@ enum L10nMS {
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",
+        "share_sound": "Share Sound",
+        "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
         "microphone_description": "Mendayakan sembang suara melalui fon kepala Bluetooth atau AirPods yang disambungkan. Memerlukan kebenaran mikrofon.",
         "microphone_permission_denied_message": "Akses mikrofon dinyahdayakan untuk CloudNow. Dayakannya dalam Tetapan Apple TV > Umum > Privasi & Keselamatan > Mikrofon.",
         "open_settings": "Buka Tetapan",

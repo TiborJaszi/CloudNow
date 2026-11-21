@@ -175,6 +175,8 @@ enum L10nCA {
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",
+        "share_sound": "Share Sound",
+        "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
         "microphone_description": "Activa el xat de veu mitjançant uns auriculars Bluetooth o uns AirPods connectats. Requereix permís del micròfon.",
         "microphone_permission_denied_message": "L'accés al micròfon està desactivat per a CloudNow. Activa'l a Configuració d'Apple TV > General > Privadesa i seguretat > Micròfon.",
         "open_settings": "Obre la configuració",
