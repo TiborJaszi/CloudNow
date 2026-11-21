@@ -152,10 +152,16 @@ struct StreamView: View {
             streamController.disconnect()
             releaseLocalPeerLease()
             MemoryLifecycleCoordinator.shared.streamDidClose()
+            CloudNowPlayingInfo.clear()
         }
         .onChange(of: streamController.state) { oldState, state in
             if state == .streaming {
                 MemoryLifecycleCoordinator.shared.streamDidStart()
+                CloudNowPlayingInfo.publish(
+                    title: game.title,
+                    service: "GeForce NOW",
+                    artworkURL: game.boxArtUrl.flatMap(URL.init(string:))
+                )
             } else if oldState == .streaming {
                 MemoryLifecycleCoordinator.shared.streamDidLeavePlayback()
             }

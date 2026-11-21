@@ -91,6 +91,11 @@ struct XboxCloudPlayerView: View {
                 showsOverlay = false
                 controller.setInputPaused(false)
                 MemoryLifecycleCoordinator.shared.streamDidStart()
+                CloudNowPlayingInfo.publish(
+                    title: item.title,
+                    service: "Xbox Cloud Gaming",
+                    artworkURL: item.artworkURL
+                )
                 if !hasRecordedPlayback {
                     hasRecordedPlayback = true
                     onStreamStarted()
@@ -142,6 +147,7 @@ struct XboxCloudPlayerView: View {
         .onDisappear {
             controller.setInputPaused(false)
             MemoryLifecycleCoordinator.shared.streamDidClose()
+            CloudNowPlayingInfo.clear()
             guard !didLeaveSession, !controller.canContinueSession else {
                 releaseLocalPeerLease()
                 return
