@@ -2,6 +2,7 @@
 @preconcurrency import CoreVideo
 import Foundation
 import os
+@preconcurrency import VideoToolbox
 
 private nonisolated let screenShareLog = Logger(subsystem: "com.owenselles.CloudNow2", category: "ScreenShare")
 
@@ -32,6 +33,8 @@ nonisolated final class CloudScreenShare: @unchecked Sendable {
     private let state = OSAllocatedUnfairLock(initialState: State())
     private let queue = DispatchQueue(label: "com.owenselles.CloudNow2.screen-share", qos: .utility)
     private let context = CIContext()
+    /// Only used on `queue`.
+    private var transferSession: VTPixelTransferSession?
     private let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) ?? CGColorSpaceCreateDeviceRGB()
     private let session: URLSession = {
         let configuration = URLSessionConfiguration.ephemeral
@@ -68,14 +71,57 @@ nonisolated final class CloudScreenShare: @unchecked Sendable {
     }
 
     private func encode(_ pixelBuffer: CVPixelBuffer) -> Data? {
-        var image = CIImage(cvPixelBuffer: pixelBuffer)
-        let width = image.extent.width
-        if width > Self.maxWidth {
-            let scale = Self.maxWidth / width
-            image = image.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
-        }
+        guard let bgra = scaledBGRA(pixelBuffer) else { return nil }
         let quality = kCGImageDestinationLossyCompressionQuality as CIImageRepresentationOption
-        return context.jpegRepresentation(of: image, colorSpace: colorSpace, options: [quality: Self.jpegQuality])
+        return context.jpegRepresentation(
+            of: CIImage(cvPixelBuffer: bgra),
+            colorSpace: colorSpace,
+            options: [quality: Self.jpegQuality]
+        )
+    }
+
+    /// The decoder's own format (10-bit, possibly compressed, for H.265 Main10) as 8-bit BGRA
+    /// at most `maxWidth` wide: Core Image misreads some of the formats VideoToolbox decodes to.
+    private func scaledBGRA(_ source: CVPixelBuffer) -> CVPixelBuffer? {
+        guard let transferSession = transferSession ?? makeTransferSession() else { return nil }
+        let width = CGFloat(CVPixelBufferGetWidth(source))
+        let height = CGFloat(CVPixelBufferGetHeight(source))
+        let scale = min(1, Self.maxWidth / width)
+        var output: CVPixelBuffer?
+        let attributes = [kCVPixelBufferIOSurfacePropertiesKey: [:]] as CFDictionary
+        guard CVPixelBufferCreate(
+            nil,
+            Int((width * scale).rounded()),
+            Int((height * scale).rounded()),
+            kCVPixelFormatType_32BGRA,
+            attributes,
+            &output
+        ) == kCVReturnSuccess, let output else { return nil }
+        let status = VTPixelTransferSessionTransferImage(transferSession, from: source, to: output)
+        guard status == noErr else {
+            screenShareLog.debug("Frame conversion failed: \(status)")
+            return nil
+        }
+        return output
+    }
+
+    private func makeTransferSession() -> VTPixelTransferSession? {
+        var session: VTPixelTransferSession?
+        guard VTPixelTransferSessionCreate(allocator: nil, pixelTransferSessionOut: &session) == noErr,
+              let session
+        else { return nil }
+        VTSessionSetProperty(
+            session,
+            key: kVTPixelTransferPropertyKey_DestinationColorPrimaries,
+            value: kCVImageBufferColorPrimaries_ITU_R_709_2
+        )
+        VTSessionSetProperty(
+            session,
+            key: kVTPixelTransferPropertyKey_DestinationTransferFunction,
+            value: kCVImageBufferTransferFunction_ITU_R_709_2
+        )
+        transferSession = session
+        return session
     }
 
     private func send(_ jpeg: Data, to endpoint: URL) {
