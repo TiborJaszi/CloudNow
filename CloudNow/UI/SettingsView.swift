@@ -2334,10 +2334,6 @@ private struct TextInputTriggerSequenceCaptureView: View {
             L10n.text("button_sequence_empty")
         case .tooManyButtons:
             L10n.text("button_sequence_too_long")
-        case .conflictsWithOverlay:
-            L10n.text("button_sequence_conflicts_overlay")
-        case .conflictsWithSteam:
-            L10n.text("button_sequence_conflicts_steam")
         }
     }
 

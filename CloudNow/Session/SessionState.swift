@@ -455,8 +455,6 @@ nonisolated enum ControllerButtonSequenceValidation: Equatable, Sendable {
     case valid
     case empty
     case tooManyButtons
-    case conflictsWithOverlay
-    case conflictsWithSteam
 }
 
 nonisolated struct ControllerButtonSequence: Codable, Equatable, Sendable {
@@ -486,14 +484,8 @@ nonisolated struct ControllerButtonSequence: Codable, Equatable, Sendable {
     ) -> ControllerButtonSequenceValidation {
         guard !isEmpty else { return .empty }
         guard count <= Self.maxButtons else { return .tooManyButtons }
-        let overlayButton: ControllerSequenceButton = overlayTriggerButton == .start ? .menu : .options
-        if count == 1, contains(overlayButton) {
-            return .conflictsWithOverlay
-        }
-        let steamButton: ControllerSequenceButton = overlayTriggerButton == .start ? .options : .menu
-        if steamOverlayGestureEnabled, count == 1, contains(steamButton) {
-            return .conflictsWithSteam
-        }
+        // A lone overlay or Steam button is fine: holding it opens the keyboard, which then
+        // takes that button's long press, and a short tap still reaches the game.
         return .valid
     }
 

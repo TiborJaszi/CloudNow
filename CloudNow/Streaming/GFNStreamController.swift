@@ -28,7 +28,6 @@ enum StreamState: Equatable {
 enum StreamOverlayState: Equatable {
     case none
     case pauseMenu
-    case textEntry
 }
 
 nonisolated enum ControllerTextEntrySubmissionResult: Equatable, Sendable {
@@ -644,6 +643,11 @@ final class GFNStreamController: NSObject {
 
     func cancelControllerTextEntry() {
         invalidateControllerTextEntryReplay()
+    }
+
+    /// Types presses from the controller keyboard overlay straight into the game.
+    func typeOverlayKeys(_ strokes: [OverlayKeyboardStroke]) {
+        inputSender?.typeOverlayKeys(strokes)
     }
 
     func submitControllerTextEntry(
