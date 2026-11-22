@@ -686,6 +686,10 @@ nonisolated protocol DataChannelSender: AnyObject {
 /// Owns all mutable input state on one latency-sensitive serial queue.
 final nonisolated class InputSender: @unchecked Sendable {
     static let remoteSensitivity: Float = 250
+    /// Two-finger scrolling on a controller touchpad: one wheel step per this much slide (the
+    /// pad's axes run -1...1) and the step's size, as a mouse's scroll wheel sends.
+    static let touchpadScrollStep: Float = 0.15
+    static let touchpadWheelDelta: Int16 = 3
 
     private struct OverlayPressState {
         var ticks = 0
@@ -705,7 +709,12 @@ final nonisolated class InputSender: @unchecked Sendable {
 
     private struct ControllerTouchpad {
         let surface: GCControllerDirectionPad
+        let secondFinger: GCControllerDirectionPad
         let button: GCControllerButtonInput
+
+        var hasSecondFinger: Bool {
+            abs(secondFinger.xAxis.value) > 0.02 || abs(secondFinger.yAxis.value) > 0.02
+        }
     }
 
     /// Called when the user long-presses the overlay trigger button to toggle the GFN overlay.
@@ -767,6 +776,7 @@ final nonisolated class InputSender: @unchecked Sendable {
     private var heldKeys: [UInt32: (vk: UInt16, scancode: UInt16, modifiers: UInt16)] = [:]
     private var heldMouseButtons = Set<UInt8>()
     private var touchpadClickButton: UInt8 = 1
+    private var touchpadScrollRest: Float = 0
 
     private var overlayPresses: [Int: OverlayPressState] = [:]
     private var overlayReplaySlots = Set<Int>()
@@ -1116,6 +1126,19 @@ final nonisolated class InputSender: @unchecked Sendable {
         let dy = curY - lastControllerTouchpad.y
         lastControllerTouchpad = (curX, curY)
 
+        if isTouching, wasTouching, touchpad.hasSecondFinger {
+            // Two fingers scroll, following the first finger's slide (finger up = page down,
+            // like a phone).
+            controllerTouchpadPointerDelta = (0, 0)
+            touchpadScrollRest += dy
+            while abs(touchpadScrollRest) >= Self.touchpadScrollStep {
+                let fingerUp = touchpadScrollRest > 0
+                touchpadScrollRest -= fingerUp ? Self.touchpadScrollStep : -Self.touchpadScrollStep
+                sendMouseWheelNow(fingerUp ? -Self.touchpadWheelDelta : Self.touchpadWheelDelta)
+            }
+            return
+        }
+        touchpadScrollRest = 0
         if isTouching, wasTouching {
             controllerTouchpadPointerDelta.x += dx * Self.remoteSensitivity
             controllerTouchpadPointerDelta.y += -dy * Self.remoteSensitivity
@@ -1964,10 +1987,18 @@ final nonisolated class InputSender: @unchecked Sendable {
 
     private func controllerTouchpad(for controller: GCController) -> ControllerTouchpad? {
         if let dualSense = controller.extendedGamepad as? GCDualSenseGamepad {
-            return ControllerTouchpad(surface: dualSense.touchpadPrimary, button: dualSense.touchpadButton)
+            return ControllerTouchpad(
+                surface: dualSense.touchpadPrimary,
+                secondFinger: dualSense.touchpadSecondary,
+                button: dualSense.touchpadButton
+            )
         }
         if let dualShock = controller.extendedGamepad as? GCDualShockGamepad {
-            return ControllerTouchpad(surface: dualShock.touchpadPrimary, button: dualShock.touchpadButton)
+            return ControllerTouchpad(
+                surface: dualShock.touchpadPrimary,
+                secondFinger: dualShock.touchpadSecondary,
+                button: dualShock.touchpadButton
+            )
         }
         return nil
     }
@@ -2127,8 +2158,10 @@ final nonisolated class InputSender: @unchecked Sendable {
             }
             if let touchpad = controllerTouchpad(for: controller) {
                 touchpad.button.pressedChangedHandler = { [weak self, weak controller] _, _, pressed in
-                    let rightTrigger = controller?.extendedGamepad?.rightTrigger.isPressed ?? false
-                    self?.sendControllerTouchpadButton(pressed, rightTriggerHeld: rightTrigger)
+                    guard let self, let controller else { return }
+                    let rightTrigger = controller.extendedGamepad?.rightTrigger.isPressed ?? false
+                    let twoFingers = controllerTouchpad(for: controller)?.hasSecondFinger ?? false
+                    sendControllerTouchpadButton(pressed, rightClick: rightTrigger || twoFingers)
                 }
             }
 
@@ -2242,12 +2275,12 @@ final nonisolated class InputSender: @unchecked Sendable {
         sendMouseButtonNow(down: pressed, button: 1)
     }
 
-    /// The touchpad click is the left mouse button, or the right one while R2 is held; the
-    /// release goes to whichever button the press went to.
-    private func sendControllerTouchpadButton(_ pressed: Bool, rightTriggerHeld: Bool) {
+    /// The touchpad click is the left mouse button, or the right one while R2 is held or with
+    /// two fingers on the pad; the release goes to whichever button the press went to.
+    private func sendControllerTouchpadButton(_ pressed: Bool, rightClick: Bool) {
         guard remoteMode == .dualsense else { return }
         if pressed {
-            touchpadClickButton = rightTriggerHeld ? 3 : 1
+            touchpadClickButton = rightClick ? 3 : 1
             sendMouseButtonNow(down: true, button: touchpadClickButton)
         } else {
             sendMouseButtonNow(down: false, button: touchpadClickButton)
