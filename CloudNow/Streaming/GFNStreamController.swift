@@ -756,6 +756,7 @@ final class GFNStreamController: NSObject {
         reconnectAttempt = 0
         serverStopped = false
         invalidateControllerTextEntryReplay()
+        CloudKeyboardShare.shared.detach()
         inputSender?.stop()
         inputSendQueue.sync {}
         signaling?.disconnect()
@@ -834,6 +835,7 @@ final class GFNStreamController: NSObject {
         state = .reconnecting(attempt: attempt)
 
         // Tear down current peer connection before reconnecting
+        CloudKeyboardShare.shared.detach()
         inputSender?.stop()
         inputSendQueue.sync {}
         videoView?.inputHandler = nil
@@ -2438,6 +2440,7 @@ extension GFNStreamController: LKRTCDataChannelDelegate {
             }
             // Forward keyboard/mouse events from the video surface to the sender
             videoView?.inputHandler = sender
+            CloudKeyboardShare.shared.attach(sender)
             syncInputPauseState()
         }
     }

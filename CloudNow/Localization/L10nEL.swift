@@ -177,6 +177,8 @@ enum L10nEL {
         "share_screen_address": "Address",
         "share_sound": "Share Sound",
         "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
+        "share_keyboard": "Share Keyboard",
+        "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "microphone_description": "Ενεργοποιεί φωνητική συνομιλία μέσω συνδεδεμένου Bluetooth ακουστικού ή AirPods. Απαιτεί άδεια μικροφώνου.",
         "microphone_permission_denied_message": "Η πρόσβαση στο μικρόφωνο είναι απενεργοποιημένη για το CloudNow. Ενεργοποιήστε την στις Ρυθμίσεις Apple TV > Γενικά > Απόρρητο και ασφάλεια > Μικρόφωνο.",
         "open_settings": "Άνοιγμα ρυθμίσεων",
