@@ -766,6 +766,7 @@ final nonisolated class InputSender: @unchecked Sendable {
     private var lastHeartbeat: UInt64 = 0
     private var heldKeys: [UInt32: (vk: UInt16, scancode: UInt16, modifiers: UInt16)] = [:]
     private var heldMouseButtons = Set<UInt8>()
+    private var touchpadClickButton: UInt8 = 1
 
     private var overlayPresses: [Int: OverlayPressState] = [:]
     private var overlayReplaySlots = Set<Int>()
@@ -2125,8 +2126,9 @@ final nonisolated class InputSender: @unchecked Sendable {
                 self?.handleExtendedValueChange(controller)
             }
             if let touchpad = controllerTouchpad(for: controller) {
-                touchpad.button.pressedChangedHandler = { [weak self] _, _, pressed in
-                    self?.sendControllerTouchpadButton(pressed)
+                touchpad.button.pressedChangedHandler = { [weak self, weak controller] _, _, pressed in
+                    let rightTrigger = controller?.extendedGamepad?.rightTrigger.isPressed ?? false
+                    self?.sendControllerTouchpadButton(pressed, rightTriggerHeld: rightTrigger)
                 }
             }
 
@@ -2240,9 +2242,16 @@ final nonisolated class InputSender: @unchecked Sendable {
         sendMouseButtonNow(down: pressed, button: 1)
     }
 
-    private func sendControllerTouchpadButton(_ pressed: Bool) {
+    /// The touchpad click is the left mouse button, or the right one while R2 is held; the
+    /// release goes to whichever button the press went to.
+    private func sendControllerTouchpadButton(_ pressed: Bool, rightTriggerHeld: Bool) {
         guard remoteMode == .dualsense else { return }
-        sendMouseButtonNow(down: pressed, button: 1)
+        if pressed {
+            touchpadClickButton = rightTriggerHeld ? 3 : 1
+            sendMouseButtonNow(down: true, button: touchpadClickButton)
+        } else {
+            sendMouseButtonNow(down: false, button: touchpadClickButton)
+        }
     }
 }
 
