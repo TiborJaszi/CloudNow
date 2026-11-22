@@ -11,8 +11,10 @@ private nonisolated let keyboardShareLog = Logger(subsystem: "com.owenselles.Clo
 /// The app first sends `{"hello": {"name": "<device name>", "id": "<vendor id>"}}`, so a server
 /// that serves several Apple TVs knows which one is playing: the connection is open only while a
 /// stream accepts input. The server then sends `{"k": <HID usage>, "d": <down>, "m": <HID
-/// modifier byte>}` for each key change, and `{"ping": 1}` every few seconds, which also lets a
-/// turned-off setting or a changed address close the connection during a stream.
+/// modifier byte>}` for each key change, `{"pad": {"b", "lt", "rt", "lx", "ly", "rx", "ry"}}` for
+/// a virtual controller's state (`VirtualGamepadState`; `{"pad": null}` disconnects it), and
+/// `{"ping": 1}` every few seconds, which also lets a turned-off setting or a changed address
+/// close the connection during a stream.
 @MainActor
 final class CloudKeyboardShare {
     static let shared = CloudKeyboardShare()
@@ -23,7 +25,7 @@ final class CloudKeyboardShare {
 
     private static let retryDelay: Duration = .seconds(2)
 
-    private weak var handler: (any InputEventHandler)?
+    private weak var sender: InputSender?
     private var task: Task<Void, Never>?
     private let session = URLSession(configuration: .ephemeral)
 
@@ -37,10 +39,10 @@ final class CloudKeyboardShare {
         return URL(string: address.trimmingCharacters(in: .whitespaces))
     }
 
-    /// The stream's input is ready: deliver shared keys to `handler` until `detach()`.
-    func attach(_ handler: any InputEventHandler) {
+    /// The stream's input is ready: deliver shared keys and controller state to `sender` until `detach()`.
+    func attach(_ sender: InputSender) {
         detach()
-        self.handler = handler
+        self.sender = sender
         task = Task { [weak self] in
             await self?.run()
         }
@@ -50,7 +52,7 @@ final class CloudKeyboardShare {
     func detach() {
         task?.cancel()
         task = nil
-        handler = nil
+        sender = nil
     }
 
     private func run() async {
@@ -84,12 +86,15 @@ final class CloudKeyboardShare {
     }
 
     private func deliver(_ text: String) {
-        guard let message = try? JSONDecoder().decode(SharedKey.self, from: Data(text.utf8)),
-              let usage = message.usage,
+        guard let message = try? JSONDecoder().decode(SharedInput.self, from: Data(text.utf8)) else { return }
+        if let pad = message.pad {
+            sender?.setVirtualGamepad(pad?.state)
+        }
+        guard let usage = message.usage,
               let down = message.down,
               let keyCode = UIKeyboardHIDUsage(rawValue: usage)
         else { return }
-        handler?.sendKeyEvent(
+        sender?.sendKeyEvent(
             down: down,
             keyCode: keyCode,
             modifiers: Self.modifierFlags(fromHID: message.modifiers ?? 0)
@@ -123,15 +128,63 @@ final class CloudKeyboardShare {
         return flags
     }
 
-    private nonisolated struct SharedKey: Decodable {
+    private nonisolated struct SharedInput: Decodable {
         let usage: Int?
         let down: Bool?
         let modifiers: Int?
+        /// Absent: no change; null: the controller page closed; a value: its state.
+        let pad: SharedPad??
 
         enum CodingKeys: String, CodingKey {
             case usage = "k"
             case down = "d"
             case modifiers = "m"
+            case pad
+        }
+
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            usage = try container.decodeIfPresent(Int.self, forKey: .usage)
+            down = try container.decodeIfPresent(Bool.self, forKey: .down)
+            modifiers = try container.decodeIfPresent(Int.self, forKey: .modifiers)
+            if container.contains(.pad) {
+                let state = try container.decodeIfPresent(SharedPad.self, forKey: .pad)
+                pad = .some(state)
+            } else {
+                pad = nil
+            }
+        }
+    }
+
+    nonisolated struct SharedPad: Decodable {
+        let buttons: Int
+        let leftTrigger: Int
+        let rightTrigger: Int
+        let leftStickX: Int
+        let leftStickY: Int
+        let rightStickX: Int
+        let rightStickY: Int
+
+        enum CodingKeys: String, CodingKey {
+            case buttons = "b"
+            case leftTrigger = "lt"
+            case rightTrigger = "rt"
+            case leftStickX = "lx"
+            case leftStickY = "ly"
+            case rightStickX = "rx"
+            case rightStickY = "ry"
+        }
+
+        var state: VirtualGamepadState {
+            VirtualGamepadState(
+                buttons: UInt16(truncatingIfNeeded: buttons),
+                leftTrigger: UInt8(clamping: leftTrigger),
+                rightTrigger: UInt8(clamping: rightTrigger),
+                leftStickX: Int16(clamping: leftStickX),
+                leftStickY: Int16(clamping: leftStickY),
+                rightStickX: Int16(clamping: rightStickX),
+                rightStickY: Int16(clamping: rightStickY)
+            )
         }
     }
 }

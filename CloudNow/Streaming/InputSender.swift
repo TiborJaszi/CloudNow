@@ -82,6 +82,21 @@ extension RemoteInputMode {
     }
 }
 
+// MARK: - Virtual Gamepad
+
+/// A controller that exists only as the state a server sends (`CloudKeyboardShare`, e.g. a phone
+/// controller page): XInput button flags (`GFNInput`), triggers 0...255, sticks -32768...32767
+/// with Y positive up.
+nonisolated struct VirtualGamepadState: Equatable, Sendable {
+    var buttons: UInt16 = 0
+    var leftTrigger: UInt8 = 0
+    var rightTrigger: UInt8 = 0
+    var leftStickX: Int16 = 0
+    var leftStickY: Int16 = 0
+    var rightStickX: Int16 = 0
+    var rightStickY: Int16 = 0
+}
+
 // MARK: - Input Event Handler
 
 /// Implemented by InputSender; adopted by VideoSurfaceView to forward keyboard/mouse events.
@@ -732,6 +747,8 @@ final nonisolated class InputSender: @unchecked Sendable {
     private var lastButtons: [Int: UInt16] = [:]
     private var lastSnapshots: [Int: GamepadSnapshot] = [:]
     private var lastSnapshotSend: [Int: UInt64] = [:]
+    private var virtualGamepadSlot: Int?
+    private var virtualGamepadState: VirtualGamepadState?
 
     private var lastMicroDpad: (x: Float, y: Float) = (0, 0)
     private var lastControllerTouchpad: (x: Float, y: Float) = (0, 0)
@@ -818,6 +835,11 @@ final nonisolated class InputSender: @unchecked Sendable {
             controllerSlots.removeAll()
             sonySlots.removeAll()
             sonyAttachTokens.removeAll()
+            if let slot = virtualGamepadSlot {
+                sendGamepadSnapshot(neutralSnapshot(bitmap: 0), slot: slot, force: true)
+            }
+            virtualGamepadSlot = nil
+            virtualGamepadState = nil
             gamepadBitmap = 0
             lastSnapshots.removeAll()
             lastSnapshotSend.removeAll()
@@ -990,6 +1012,9 @@ final nonisolated class InputSender: @unchecked Sendable {
 
         for controller in extendedControllers.sorted(by: { slot(for: $0) < slot(for: $1) }) {
             sendGamepadState(for: controller, sampleOverlay: true, now: now)
+        }
+        if let slot = virtualGamepadSlot, let state = virtualGamepadState {
+            sendGamepadSnapshot(snapshot(of: state), slot: slot, now: now)
         }
 
         if remoteMode == .dualsense,
@@ -1403,6 +1428,49 @@ final nonisolated class InputSender: @unchecked Sendable {
                 sendGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
             }
         }
+    }
+
+    /// Connects the virtual controller on the first state, updates it, and disconnects it on nil.
+    func setVirtualGamepad(_ state: VirtualGamepadState?) {
+        inputQueue.async { [weak self] in
+            self?.applyVirtualGamepad(state)
+        }
+    }
+
+    private func applyVirtualGamepad(_ state: VirtualGamepadState?) {
+        guard isRunning else { return }
+        guard let state else {
+            guard let slot = virtualGamepadSlot else { return }
+            virtualGamepadSlot = nil
+            virtualGamepadState = nil
+            gamepadBitmap &= ~Self.extendedGamepadBitmapMask(for: slot)
+            sendGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
+            lastSnapshots[slot] = nil
+            lastSnapshotSend[slot] = nil
+            return
+        }
+        if virtualGamepadSlot == nil {
+            guard let slot = firstFreeSlot else { return }
+            virtualGamepadSlot = slot
+            gamepadBitmap |= Self.extendedGamepadBitmapMask(for: slot)
+            sendGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
+        }
+        virtualGamepadState = state
+        guard !isPaused, let slot = virtualGamepadSlot else { return }
+        sendGamepadSnapshot(snapshot(of: state), slot: slot)
+    }
+
+    private func snapshot(of state: VirtualGamepadState) -> GamepadSnapshot {
+        GamepadSnapshot(
+            buttons: state.buttons,
+            leftTrigger: state.leftTrigger,
+            rightTrigger: state.rightTrigger,
+            leftStickX: state.leftStickX,
+            leftStickY: state.leftStickY,
+            rightStickX: state.rightStickX,
+            rightStickY: state.rightStickY,
+            bitmap: gamepadBitmap
+        )
     }
 
     private func neutralSnapshot(bitmap: UInt16) -> GamepadSnapshot {
@@ -2050,7 +2118,7 @@ final nonisolated class InputSender: @unchecked Sendable {
     }
 
     private var firstFreeSlot: Int? {
-        let used = Set(controllerSlots.values)
+        let used = Set(controllerSlots.values).union(virtualGamepadSlot.map { [$0] } ?? [])
         return (0 ..< 4).first { !used.contains($0) }
     }
 
