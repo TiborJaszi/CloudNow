@@ -273,7 +273,11 @@ final nonisolated class CloudVideoDecoderH265: NSObject, LKRTCVideoDecoder, @unc
             return -1
         }
         // Share Video passes the frame on as it came; a new viewer needs a key frame first.
-        let wantsKeyFrame = CloudVideoShare.shared.offer(data, isKeyFrame: keyFrameParameterSets != nil)
+        let wantsKeyFrame = CloudVideoShare.shared.offer(
+            data,
+            isKeyFrame: keyFrameParameterSets != nil,
+            rtpTimestamp: encodedImage.timeStamp
+        )
         return wantsKeyFrame ? Self.okRequestKeyFrame : 0
     }
 
