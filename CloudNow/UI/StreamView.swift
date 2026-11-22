@@ -60,6 +60,8 @@ struct StreamView: View {
     @State private var streamController = GFNStreamController()
     @State private var backgroundLeaveTask: Task<Void, Never>?
     @State private var overlayState: StreamOverlayState = .none
+    /// The controller keyboard overlay while it's on screen; it may have handed focus to the game.
+    @State private var keyboard: ControllerKeyboardModel?
     @State private var showExitConfirmation = false
     @State private var loadingPhase: LoadingPhase = .finding
     @State private var createdSession: SessionInfo?
@@ -172,6 +174,9 @@ struct StreamView: View {
             } else if oldState == .streaming {
                 MemoryLifecycleCoordinator.shared.streamDidLeavePlayback()
             }
+            if state != .streaming, keyboard != nil {
+                closeKeyboard()
+            }
             switch state {
             case .connecting, .streaming, .reconnecting:
                 break
@@ -190,12 +195,10 @@ struct StreamView: View {
             togglePauseMenu()
         }
         .onChange(of: streamController.textEntryRequestCount) { _, _ in
-            presentControllerTextEntry()
+            presentControllerKeyboard()
         }
         .onExitCommand {
-            if overlayState == .textEntry {
-                cancelControllerTextEntry()
-            } else if overlayState == .pauseMenu {
+            if overlayState == .pauseMenu {
                 closeOverlay()
             } else if streamController.state != .streaming {
                 disconnect()
@@ -420,13 +423,14 @@ struct StreamView: View {
                             .transition(.move(edge: .leading).combined(with: .opacity))
                     }
 
-                    if overlayState == .textEntry {
-                        ControllerTextEntryOverlay(
-                            streamController: streamController,
-                            onCancel: cancelControllerTextEntry,
-                            onAccepted: { setOverlayState(.none) }
+                    if let keyboard, overlayState == .none {
+                        ControllerKeyboardOverlay(
+                            model: keyboard,
+                            shortcutLabel: settings.textInputTriggerSequence.label,
+                            onReleaseFocus: releaseKeyboardFocus,
+                            onClose: closeKeyboard
                         )
-                        .transition(.opacity.combined(with: .scale(scale: 0.96)))
+                        .transition(.opacity)
                     }
 
                     // Stays visible while the pause menu is open (the menu is a left sidebar)
@@ -472,8 +476,9 @@ struct StreamView: View {
             .animation(.easeInOut(duration: 0.4), value: streamController.timeWarning)
             .animation(.easeInOut(duration: 0.2), value: overlayState)
             .animation(.easeInOut(duration: 0.2), value: streamController.statsMode)
-            .onChange(of: overlayState) { _, state in
-                streamController.setOverlayInputPaused(state != .none)
+            .animation(.easeInOut(duration: 0.15), value: keyboard == nil)
+            .onChange(of: overlayState) { _, _ in
+                syncOverlayInputPause()
             }
             .alert(L10n.text("end_session_title"), isPresented: $showExitConfirmation) {
                 Button(L10n.text("end_session"), role: .destructive) { disconnect() }
@@ -1536,159 +1541,46 @@ struct StreamView: View {
     }
 
     private func togglePauseMenu() {
-        if overlayState == .textEntry {
-            streamController.cancelControllerTextEntry()
-            setOverlayState(.pauseMenu)
-            return
-        }
+        // The pause menu hides the keyboard; it comes back without focus.
+        keyboard?.setFocused(false)
         setOverlayState(overlayState == .pauseMenu ? .none : .pauseMenu)
     }
 
     private func closeOverlay() {
-        if overlayState == .textEntry {
-            streamController.cancelControllerTextEntry()
-        }
         setOverlayState(.none)
     }
 
-    private func presentControllerTextEntry() {
-        guard streamController.state == .streaming, overlayState == .none else {
-            // Input is already paused for the accepted shortcut. Do not leave it paused when
-            // another overlay prevents the text-entry UI from being presented.
-            streamController.cancelControllerTextEntry()
-            return
+    /// The keyboard shortcut: show the keyboard overlay, or give it focus back.
+    private func presentControllerKeyboard() {
+        if streamController.state == .streaming, overlayState == .none {
+            let model = keyboard ?? ControllerKeyboardModel { [streamController] strokes in
+                streamController.typeOverlayKeys(strokes)
+            }
+            model.setFocused(true)
+            keyboard = model
+            syncOverlayInputPause()
         }
-        setOverlayState(.textEntry)
-    }
-
-    private func cancelControllerTextEntry() {
+        // The shortcut paused input on its own; from here the overlay's focus owns that.
         streamController.cancelControllerTextEntry()
-        setOverlayState(.none)
+    }
+
+    private func releaseKeyboardFocus() {
+        keyboard?.setFocused(false)
+        syncOverlayInputPause()
+    }
+
+    private func closeKeyboard() {
+        keyboard = nil
+        syncOverlayInputPause()
     }
 
     private func setOverlayState(_ state: StreamOverlayState) {
         overlayState = state
-        streamController.setOverlayInputPaused(state != .none)
-    }
-}
-
-/// Owns text editing state so each keystroke invalidates only this small overlay.
-private struct ControllerTextEntryOverlay: View {
-    private enum FocusTarget: Hashable {
-        case field
-        case send
+        syncOverlayInputPause()
     }
 
-    let streamController: GFNStreamController
-    let onCancel: () -> Void
-    let onAccepted: () -> Void
-
-    @State private var text = ""
-    @State private var validationMessage: String?
-    @State private var isSending = false
-    @FocusState private var focus: FocusTarget?
-
-    var body: some View {
-        VStack(spacing: 24) {
-            Text(L10n.text("controller_text_entry_title"))
-                .font(.title.weight(.semibold))
-                .foregroundStyle(.white)
-                .multilineTextAlignment(.center)
-
-            Text(L10n.text("controller_text_entry_instructions"))
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-
-            VStack(spacing: 12) {
-                TextField(L10n.text("controller_text_entry_placeholder"), text: $text)
-                    .multilineTextAlignment(.center)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                    .focused($focus, equals: .field)
-                    .disabled(isSending)
-                    .onChange(of: text) { _, _ in
-                        validationMessage = nil
-                    }
-                    .onSubmit {
-                        focus = .send
-                    }
-
-                Text(L10n.text("controller_text_entry_done_hint"))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-
-                if let validationMessage {
-                    Text(validationMessage)
-                        .font(.footnote.weight(.medium))
-                        .foregroundStyle(.orange)
-                        .multilineTextAlignment(.center)
-                }
-            }
-            .frame(maxWidth: .infinity)
-
-            HStack(spacing: 20) {
-                Button(L10n.text("cancel"), action: onCancel)
-                    .buttonStyle(.bordered)
-                    .disabled(isSending)
-
-                Button {
-                    submit()
-                } label: {
-                    if isSending {
-                        ProgressView()
-                    } else {
-                        Text(L10n.text("controller_text_entry_send"))
-                    }
-                }
-                .focused($focus, equals: .send)
-                .buttonStyle(.borderedProminent)
-                .disabled(text.isEmpty || isSending)
-            }
-        }
-        .frame(maxWidth: 680)
-        .padding(.horizontal, 42)
-        .padding(.vertical, 36)
-        .background(
-            LinearGradient(
-                colors: [.black.opacity(0.90), Color(red: 0.10, green: 0.12, blue: 0.16).opacity(0.92)],
-                startPoint: .top,
-                endPoint: .bottom
-            ),
-            in: RoundedRectangle(cornerRadius: 30, style: .continuous)
-        )
-        .overlay {
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .stroke(.white.opacity(0.18), lineWidth: 1)
-        }
-        .shadow(color: .black.opacity(0.4), radius: 32, y: 14)
-        .task { focus = .field }
-    }
-
-    private func submit() {
-        isSending = true
-        validationMessage = nil
-        focus = nil
-        streamController.submitControllerTextEntry(text) { result in
-            isSending = false
-            switch result {
-            case .accepted:
-                onAccepted()
-            case .unsupportedCharacters:
-                validationMessage = L10n.text("controller_text_entry_unsupported_characters")
-                focus = .field
-            case .unsupportedKeyboardLayout:
-                validationMessage = L10n.text("controller_text_entry_unsupported_layout")
-                focus = .field
-            case .tooLong:
-                validationMessage = L10n.text("controller_text_entry_too_long")
-                focus = .field
-            case .sendFailed:
-                validationMessage = L10n.text("controller_text_entry_send_failed")
-                focus = .field
-            }
-        }
+    private func syncOverlayInputPause() {
+        streamController.setOverlayInputPaused(overlayState != .none || keyboard?.focused == true)
     }
 }
 

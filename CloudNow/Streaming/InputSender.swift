@@ -273,6 +273,12 @@ nonisolated enum KeyboardReplayCompletionResult: Equatable, Sendable {
     case cancelled
 }
 
+/// One press on the controller keyboard overlay: a character to type, or a special key.
+nonisolated enum OverlayKeyboardStroke: Equatable, Sendable {
+    case character(String)
+    case key(UIKeyboardHIDUsage)
+}
+
 /// Reusable fixed-capacity storage handed exclusively from InputSender to the WebRTC send queue.
 /// The sender does not mutate a packet again until the completion returns it to the pool.
 final nonisolated class EncodedInputPacket: @unchecked Sendable {
@@ -785,6 +791,8 @@ final nonisolated class InputSender: @unchecked Sendable {
     private var steamTriggeredSlots = Set<Int>()
     private var keyboardReplayGeneration: UInt64 = 0
     private var acceptedReplayDownEvents: [KeyboardReplayEvent] = []
+    private var overlayTypingQueue: [KeyboardReplayEvent] = []
+    private var overlayTypingActive = false
     private static let sampleInterval = 8_333_333
     private static let gamepadKeepAlive = UInt64(33_333_333)
     private static let heartbeatInterval = UInt64(2_000_000_000)
@@ -828,6 +836,7 @@ final nonisolated class InputSender: @unchecked Sendable {
         inputQueue.sync {
             isRunning = false
             cancelKeyboardReplay()
+            overlayTypingQueue.removeAll()
             sampler?.setEventHandler {}
             sampler?.cancel()
             sampler = nil
@@ -1824,6 +1833,55 @@ final nonisolated class InputSender: @unchecked Sendable {
             return .unsupportedLayout
         case .tooLong:
             return .tooLong
+        }
+    }
+
+    /// Types presses from the controller keyboard overlay straight into the game. It runs while
+    /// gameplay input is paused (the overlay holds the controller); presses queue up and go out
+    /// one event at a time, so quick presses are never dropped.
+    func typeOverlayKeys(_ strokes: [OverlayKeyboardStroke]) {
+        inputQueue.async { [weak self] in
+            guard let self, isRunning else { return }
+            for stroke in strokes {
+                overlayTypingQueue.append(contentsOf: overlayEvents(for: stroke))
+            }
+            guard !overlayTypingActive else { return }
+            overlayTypingActive = true
+            sendNextOverlayEvent()
+        }
+    }
+
+    private func overlayEvents(for stroke: OverlayKeyboardStroke) -> [KeyboardReplayEvent] {
+        switch stroke {
+        case let .character(text):
+            // A layout the planner can't map yet still types through the US layout.
+            for layout in [keyboardLayout, KeyboardReplayLayout.englishUS.rawValue] {
+                if case let .supported(plan) = KeyboardReplayPlanner.plan(
+                    for: text,
+                    keyboardLayout: layout,
+                    appendEnter: false
+                ) {
+                    return plan.events
+                }
+            }
+            return []
+        case let .key(usage):
+            guard let mapping = CloudKeyboardHIDMapper.mapping(for: usage) else { return [] }
+            return [true, false].map {
+                KeyboardReplayEvent(down: $0, virtualKey: mapping.virtualKey, scanCode: mapping.scanCode, modifiers: 0)
+            }
+        }
+    }
+
+    private func sendNextOverlayEvent() {
+        guard isRunning, !overlayTypingQueue.isEmpty else {
+            overlayTypingActive = false
+            return
+        }
+        let event = overlayTypingQueue.removeFirst()
+        emitKeyboard(down: event.down, vk: event.virtualKey, scancode: event.scanCode, modifiers: event.modifiers)
+        inputQueue.asyncAfter(deadline: .now() + .milliseconds(Self.replayEventIntervalMs)) { [weak self] in
+            self?.sendNextOverlayEvent()
         }
     }
 
