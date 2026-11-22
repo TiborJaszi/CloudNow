@@ -2688,8 +2688,13 @@ final class CloudNowUITests: XCTestCase {
         }
         // A press sent while focus is still settling into the tab bar can be
         // dropped on a slow runner; retry once instead of failing the test.
-        if !waitForFocus(tab, timeout: 2) {
+        if !waitForFocus(tab, timeout: 2), !tab.isSelected {
             XCUIRemote.shared.press(.right)
+        }
+        // Focusing a tab opens it, and a screen that focuses its own content
+        // (Library's focused search field) takes focus from the tab at once.
+        if tab.isSelected, !tab.hasFocus {
+            return
         }
         XCTAssertTrue(waitForFocus(tab))
         XCUIRemote.shared.press(.select)
