@@ -60,7 +60,7 @@ struct StreamView: View {
     @State private var streamController = GFNStreamController()
     @State private var backgroundLeaveTask: Task<Void, Never>?
     @State private var overlayState: StreamOverlayState = .none
-    /// The controller keyboard overlay while it's on screen; it may have handed focus to the game.
+    /// The controller keyboard overlay while it's on screen; it holds the controller meanwhile.
     @State private var keyboard: ControllerKeyboardModel?
     @State private var showExitConfirmation = false
     @State private var loadingPhase: LoadingPhase = .finding
@@ -426,8 +426,6 @@ struct StreamView: View {
                     if let keyboard, overlayState == .none {
                         ControllerKeyboardOverlay(
                             model: keyboard,
-                            shortcutLabel: settings.textInputTriggerSequence.label,
-                            onReleaseFocus: releaseKeyboardFocus,
                             onClose: closeKeyboard
                         )
                         .transition(.opacity)
@@ -1541,8 +1539,7 @@ struct StreamView: View {
     }
 
     private func togglePauseMenu() {
-        // The pause menu hides the keyboard; it comes back without focus.
-        keyboard?.setFocused(false)
+        keyboard = nil
         setOverlayState(overlayState == .pauseMenu ? .none : .pauseMenu)
     }
 
@@ -1550,23 +1547,16 @@ struct StreamView: View {
         setOverlayState(.none)
     }
 
-    /// The keyboard shortcut: show the keyboard overlay, or give it focus back.
+    /// The keyboard shortcut: show the keyboard overlay.
     private func presentControllerKeyboard() {
-        if streamController.state == .streaming, overlayState == .none {
-            let model = keyboard ?? ControllerKeyboardModel { [streamController] strokes in
+        if streamController.state == .streaming, overlayState == .none, keyboard == nil {
+            keyboard = ControllerKeyboardModel { [streamController] strokes in
                 streamController.typeOverlayKeys(strokes)
             }
-            model.setFocused(true)
-            keyboard = model
             syncOverlayInputPause()
         }
-        // The shortcut paused input on its own; from here the overlay's focus owns that.
+        // The shortcut paused input on its own; from here the overlay owns that.
         streamController.cancelControllerTextEntry()
-    }
-
-    private func releaseKeyboardFocus() {
-        keyboard?.setFocused(false)
-        syncOverlayInputPause()
     }
 
     private func closeKeyboard() {
@@ -1580,7 +1570,7 @@ struct StreamView: View {
     }
 
     private func syncOverlayInputPause() {
-        streamController.setOverlayInputPaused(overlayState != .none || keyboard?.focused == true)
+        streamController.setOverlayInputPaused(overlayState != .none || keyboard != nil)
     }
 }
 

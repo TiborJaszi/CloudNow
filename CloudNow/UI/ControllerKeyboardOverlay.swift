@@ -19,7 +19,7 @@ struct ControllerKeyboardKey: Equatable {
 }
 
 /// The overlay's state: selection, Shift, what was typed since the last Enter, position, and
-/// whether it holds the controller. Presses go to the game as they happen; nothing is buffered.
+/// whether the control hints show. Presses go to the game as they happen; nothing is buffered.
 @MainActor @Observable
 final class ControllerKeyboardModel {
     static let rows: [[ControllerKeyboardKey]] = [
@@ -40,9 +40,9 @@ final class ControllerKeyboardModel {
     private(set) var row = 1
     private(set) var column = 0
     private(set) var shift = false
-    /// Echo of what went to the game since it was opened or Enter was pressed, for L2 to clear.
+    /// What went to the game since it was opened or Enter was pressed, for L2 to clear.
     private(set) var typed = ""
-    private(set) var focused = true
+    private(set) var showsHints = false
     /// How far the panel was dragged from its top-right home, clamped to `dragRange`.
     private(set) var offset: CGSize = .zero
     var dragRange: CGSize = .zero {
@@ -55,8 +55,8 @@ final class ControllerKeyboardModel {
         self.type = type
     }
 
-    func setFocused(_ focused: Bool) {
-        self.focused = focused
+    func toggleHints() {
+        showsHints.toggle()
     }
 
     // MARK: Selection
@@ -175,8 +175,8 @@ private struct ControllerKeyboardPoller {
         latched = held
     }
 
-    /// Buttons that fire now: fresh presses, plus held repeating ones. Square and Triangle hand
-    /// input back to the game, so they fire on release — otherwise the game would see them held.
+    /// Buttons that fire now: fresh presses, plus held repeating ones. Triangle hands input back
+    /// to the game, so it fires on release — otherwise the game would see it held.
     mutating func poll(now: TimeInterval) -> (pressed: [Button], released: [Button]) {
         let current = Self.pressedButtons()
         latched.formIntersection(current)
@@ -244,13 +244,11 @@ private struct ControllerKeyboardPoller {
     }
 }
 
-/// A see-through keyboard in the top-right corner of the stream. While it holds focus the
-/// controller drives it: D-pad picks a key, A types it, and every press reaches the game at once.
+/// A see-through keyboard in the top-right corner of the stream: just the keys, no panel. While
+/// it's open the controller drives it: D-pad picks a key, A types it, and every press reaches the
+/// game at once. The touchpad or right stick moves it; Square shows the control hints.
 struct ControllerKeyboardOverlay: View {
     let model: ControllerKeyboardModel
-    /// The shortcut that brings focus back once Square handed it to the game.
-    let shortcutLabel: String
-    let onReleaseFocus: () -> Void
     let onClose: () -> Void
 
     private static let keySize = CGSize(width: 60, height: 52)
@@ -258,79 +256,49 @@ struct ControllerKeyboardOverlay: View {
     private static let margin: CGFloat = 40
 
     @State private var containerSize: CGSize = .zero
-    @State private var panelSize: CGSize = .zero
+    @State private var keyboardSize: CGSize = .zero
 
     var body: some View {
-        panel
-            .onGeometryChange(for: CGSize.self) { $0.size } action: { panelSize = $0; updateDragRange() }
-            .offset(model.offset)
-            .padding(Self.margin)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-            .onGeometryChange(for: CGSize.self) { $0.size } action: { containerSize = $0; updateDragRange() }
-            .task(id: model.focused) {
-                guard model.focused else { return }
-                await pollController()
+        VStack(alignment: .leading, spacing: 10) {
+            keys
+            if model.showsHints {
+                hints
             }
+        }
+        .fixedSize()
+        .onGeometryChange(for: CGSize.self) { $0.size } action: { keyboardSize = $0; updateDragRange() }
+        .offset(model.offset)
+        .padding(Self.margin)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+        .onGeometryChange(for: CGSize.self) { $0.size } action: { containerSize = $0; updateDragRange() }
+        .task { await pollController() }
     }
 
-    private var panel: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            header
-            VStack(alignment: .leading, spacing: Self.spacing) {
-                ForEach(ControllerKeyboardModel.rows.indices, id: \.self) { row in
-                    HStack(spacing: Self.spacing) {
-                        ForEach(ControllerKeyboardModel.rows[row].indices, id: \.self) { index in
-                            keyView(ControllerKeyboardModel.rows[row][index], row: row, index: index)
-                        }
+    private var keys: some View {
+        VStack(alignment: .leading, spacing: Self.spacing) {
+            ForEach(ControllerKeyboardModel.rows.indices, id: \.self) { row in
+                HStack(spacing: Self.spacing) {
+                    ForEach(ControllerKeyboardModel.rows[row].indices, id: \.self) { index in
+                        keyView(ControllerKeyboardModel.rows[row][index], row: row, index: index)
                     }
                 }
             }
-            hints
         }
-        .padding(14)
-        .background(.black.opacity(0.72), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(.white.opacity(model.focused ? 0.22 : 0.1), lineWidth: 1)
-        }
-        .opacity(model.focused ? 1 : 0.5)
-        .animation(.easeOut(duration: 0.15), value: model.focused)
-    }
-
-    private var header: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.white.opacity(0.6))
-                .frame(width: 34, height: 34)
-                .background(.white.opacity(0.12), in: Circle())
-            Text(model.typed.isEmpty ? " " : model.typed)
-                .font(.system(size: 22, weight: .medium, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.85))
-                .lineLimit(1)
-                .truncationMode(.head)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            if !model.focused {
-                Text("Hold \(shortcutLabel) to type")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.75))
-            }
-        }
+        .fixedSize()
     }
 
     private func keyView(_ key: ControllerKeyboardKey, row: Int, index: Int) -> some View {
-        let selected = model.focused && model.isSelected(row: row, keyIndex: index)
+        let selected = model.isSelected(row: row, keyIndex: index)
         let active = key.action == .shift && model.shift
         let label = model.shift && key.label.count == 1 ? key.label.uppercased() : key.label
         let width = Self.keySize.width * CGFloat(key.width) + Self.spacing * CGFloat(key.width - 1)
+        let shape = RoundedRectangle(cornerRadius: 10, style: .continuous)
         return Text(label)
             .font(.system(size: key.label.count > 1 ? 19 : 26, weight: .semibold))
             .foregroundStyle(selected ? Color.black : Color.white)
             .frame(width: width, height: Self.keySize.height)
-            .background(
-                Color.white.opacity(selected ? 0.92 : active ? 0.35 : 0.1),
-                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
-            )
+            .background(selected ? Color.white.opacity(0.92) : Color.black.opacity(active ? 0.8 : 0.6), in: shape)
+            .overlay { shape.stroke(.white.opacity(active ? 0.6 : 0.18), lineWidth: 1) }
             .scaleEffect(selected ? 1.06 : 1)
     }
 
@@ -343,16 +311,20 @@ struct ControllerKeyboardOverlay: View {
                 hint(pad?.leftShoulder.sfSymbolsName ?? "l1.rectangle.roundedbottom", "shift")
                 hint(pad?.rightShoulder.sfSymbolsName ?? "r1.rectangle.roundedbottom", "space")
                 hint(pad?.leftTrigger.sfSymbolsName ?? "l2.rectangle.roundedtop", "clear")
-                hint(pad?.rightTrigger.sfSymbolsName ?? "r2.rectangle.roundedtop", "enter")
             }
             HStack(spacing: 14) {
-                hint(pad?.buttonX.sfSymbolsName ?? "x.circle", "to game")
+                hint(pad?.rightTrigger.sfSymbolsName ?? "r2.rectangle.roundedtop", "enter")
                 hint(pad?.buttonY.sfSymbolsName ?? "y.circle", "close")
+                hint(pad?.buttonX.sfSymbolsName ?? "x.circle", "hide help")
                 hint("hand.draw", "touchpad moves")
             }
         }
         .font(.system(size: 16, weight: .medium))
-        .foregroundStyle(.white.opacity(0.7))
+        .foregroundStyle(.white.opacity(0.85))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.black.opacity(0.6), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .fixedSize()
     }
 
     private func hint(_ symbol: String, _ text: String) -> some View {
@@ -364,8 +336,8 @@ struct ControllerKeyboardOverlay: View {
 
     private func updateDragRange() {
         model.dragRange = CGSize(
-            width: max(containerSize.width - panelSize.width - Self.margin * 2, 0),
-            height: max(containerSize.height - panelSize.height - Self.margin * 2, 0)
+            width: max(containerSize.width - keyboardSize.width - Self.margin * 2, 0),
+            height: max(containerSize.height - keyboardSize.height - Self.margin * 2, 0)
         )
     }
 
@@ -378,15 +350,9 @@ struct ControllerKeyboardOverlay: View {
             for button in pressed {
                 handlePress(button)
             }
-            for button in released {
-                if button == .buttonX {
-                    onReleaseFocus()
-                    return
-                }
-                if button == .buttonY {
-                    onClose()
-                    return
-                }
+            if released.contains(.buttonY) {
+                onClose()
+                return
             }
             model.move(by: poller.dragDelta(elapsed: now - last))
             last = now
@@ -402,11 +368,12 @@ struct ControllerKeyboardOverlay: View {
         case .right: model.moveSelection(dx: 1, dy: 0)
         case .buttonA: model.pressSelected()
         case .buttonB: model.backspace()
+        case .buttonX: model.toggleHints()
         case .l1: model.toggleShift()
         case .r1: model.space()
         case .l2: model.clear()
         case .r2: model.enter()
-        case .buttonX, .buttonY: break
+        case .buttonY: break
         }
     }
 }
