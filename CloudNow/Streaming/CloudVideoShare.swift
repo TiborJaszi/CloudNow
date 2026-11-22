@@ -25,8 +25,11 @@ nonisolated final class CloudVideoShare: @unchecked Sendable {
     static let addressDefaultsKey = "videoShare.address"
     static let defaultAddress = "ws://192.168.31.204:8796/video"
 
-    /// Frames handed to the socket but not sent yet; more and the network can't keep up.
-    private static let maxInFlight = 8
+    /// Frames handed to the socket but not sent yet (about half a second at 60 fps): enough to
+    /// ride out a network hiccup at GeForce NOW's bitrate; more and the network can't keep up.
+    private static let maxInFlight = 30
+    /// Key frames are the largest: asked for at most this often.
+    private static let keyFrameRequestInterval: TimeInterval = 0.5
     private static let idleTimeout: TimeInterval = 3
     private static let retryInterval: TimeInterval = 2
     private static let configMessage = "{\"config\": {\"codec\": \"hevc\"}}"
@@ -39,6 +42,7 @@ nonisolated final class CloudVideoShare: @unchecked Sendable {
         var wantsKeyFrame = false
         var waitsForKeyFrame = true
         var inFlight = 0
+        var lastKeyFrameRequest: TimeInterval = 0
         var lastRTPTimestamp: UInt32?
         /// 90 kHz ticks since the first frame, across the 32-bit wrap.
         var rtpTicks: UInt64 = 0
@@ -80,21 +84,31 @@ nonisolated final class CloudVideoShare: @unchecked Sendable {
             state.lastRTPTimestamp = rtpTimestamp
             let ticks = state.rtpTicks
             guard state.isWatched else { return (false, false, ticks) }
+            if isKeyFrame {   // what was asked for (or came anyway)
+                state.waitsForKeyFrame = false
+                state.wantsKeyFrame = false
+            }
             let wantsKeyFrame = state.wantsKeyFrame
             state.wantsKeyFrame = false
-            if isKeyFrame {
-                state.waitsForKeyFrame = false
-            }
             if state.waitsForKeyFrame {
                 return (false, wantsKeyFrame, ticks)
             }
             guard state.inFlight < Self.maxInFlight else {
                 // The network fell behind: skip to the next key frame, and ask for one.
                 state.waitsForKeyFrame = true
-                return (false, true, ticks)
+                state.wantsKeyFrame = true
+                return (false, false, ticks)
             }
             state.inFlight += 1
             return (true, wantsKeyFrame, ticks)
+        }
+        let requestsKeyFrame = wantsKeyFrame && state.withLock { state -> Bool in
+            guard now - state.lastKeyFrameRequest >= Self.keyFrameRequestInterval else {
+                state.wantsKeyFrame = true   // asked again on a later frame
+                return false
+            }
+            state.lastKeyFrameRequest = now
+            return true
         }
         if timerStarted.compareExchange(expected: false, desired: true, ordering: .relaxed).exchanged {
             queue.async { [self] in startTimer() }
@@ -107,7 +121,7 @@ nonisolated final class CloudVideoShare: @unchecked Sendable {
             message.append(accessUnit)
             queue.async { [self] in deliver(message, isKeyFrame: isKeyFrame) }
         }
-        return wantsKeyFrame
+        return requestsKeyFrame
     }
 
     // MARK: Connection (on `queue`)
