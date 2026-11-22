@@ -1127,14 +1127,14 @@ final nonisolated class InputSender: @unchecked Sendable {
         lastControllerTouchpad = (curX, curY)
 
         if isTouching, wasTouching, touchpad.hasSecondFinger {
-            // Two fingers scroll, following the first finger's slide (finger up = page down,
-            // like a phone).
+            // Two fingers scroll, following the first finger's slide (finger up = page up,
+            // like a mouse wheel).
             controllerTouchpadPointerDelta = (0, 0)
             touchpadScrollRest += dy
             while abs(touchpadScrollRest) >= Self.touchpadScrollStep {
                 let fingerUp = touchpadScrollRest > 0
                 touchpadScrollRest -= fingerUp ? Self.touchpadScrollStep : -Self.touchpadScrollStep
-                sendMouseWheelNow(fingerUp ? -Self.touchpadWheelDelta : Self.touchpadWheelDelta)
+                sendMouseWheelNow(fingerUp ? Self.touchpadWheelDelta : -Self.touchpadWheelDelta)
             }
             return
         }
@@ -2188,9 +2188,10 @@ final nonisolated class InputSender: @unchecked Sendable {
             if let touchpad = controllerTouchpad(for: controller) {
                 touchpad.button.pressedChangedHandler = { [weak self, weak controller] _, _, pressed in
                     guard let self, let controller else { return }
-                    let rightTrigger = controller.extendedGamepad?.rightTrigger.isPressed ?? false
+                    let pad = controller.extendedGamepad
+                    let trigger = (pad?.rightTrigger.isPressed ?? false) || (pad?.leftTrigger.isPressed ?? false)
                     let twoFingers = controllerTouchpad(for: controller)?.hasSecondFinger ?? false
-                    sendControllerTouchpadButton(pressed, rightClick: rightTrigger || twoFingers)
+                    sendControllerTouchpadButton(pressed, rightClick: trigger || twoFingers)
                 }
             }
 
@@ -2304,7 +2305,7 @@ final nonisolated class InputSender: @unchecked Sendable {
         sendMouseButtonNow(down: pressed, button: 1)
     }
 
-    /// The touchpad click is the left mouse button, or the right one while R2 is held or with
+    /// The touchpad click is the left mouse button, or the right one while L2 or R2 is held or with
     /// two fingers on the pad; the release goes to whichever button the press went to.
     private func sendControllerTouchpadButton(_ pressed: Bool, rightClick: Bool) {
         guard remoteMode == .dualsense else { return }
