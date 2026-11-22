@@ -31,7 +31,8 @@ final class CloudKeyboardShare {
 
     static var endpoint: URL? {
         let defaults = UserDefaults.standard
-        guard defaults.bool(forKey: enabledDefaultsKey) else { return nil }
+        // On unless turned off in Settings.
+        guard defaults.object(forKey: enabledDefaultsKey) as? Bool ?? true else { return nil }
         let address = defaults.string(forKey: addressDefaultsKey) ?? defaultAddress
         return URL(string: address.trimmingCharacters(in: .whitespaces))
     }
