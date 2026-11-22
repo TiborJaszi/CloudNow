@@ -12,7 +12,9 @@ private nonisolated let keyboardShareLog = Logger(subsystem: "com.owenselles.Clo
 /// that serves several Apple TVs knows which one is playing: the connection is open only while a
 /// stream accepts input. The server then sends `{"k": <HID usage>, "d": <down>, "m": <HID
 /// modifier byte>}` for each key change, `{"pad": {"b", "lt", "rt", "lx", "ly", "rx", "ry"}}` for
-/// a virtual controller's state (`VirtualGamepadState`; `{"pad": null}` disconnects it), and
+/// a virtual controller's state (`VirtualGamepadState`; `{"pad": null}` disconnects it),
+/// `{"mouse": [dx, dy]}`, `{"button": [1 left | 2 middle | 3 right, down]}` and `{"wheel": n}`
+/// for the mouse (a phone touchpad), and
 /// `{"ping": 1}` every few seconds, which also lets a turned-off setting or a changed address
 /// close the connection during a stream.
 @MainActor
@@ -90,6 +92,15 @@ final class CloudKeyboardShare {
         if let pad = message.pad {
             sender?.setVirtualGamepad(pad?.state)
         }
+        if let move = message.mouse, move.count == 2 {
+            sender?.sendMouseMove(dx: Int16(clamping: move[0]), dy: Int16(clamping: move[1]))
+        }
+        if let button = message.button, button.count == 2, (1 ... 3).contains(button[0]) {
+            sender?.sendMouseButton(down: button[1] != 0, button: UInt8(button[0]))
+        }
+        if let wheel = message.wheel {
+            sender?.sendMouseWheel(delta: Int16(clamping: wheel))
+        }
         guard let usage = message.usage,
               let down = message.down,
               let keyCode = UIKeyboardHIDUsage(rawValue: usage)
@@ -134,12 +145,18 @@ final class CloudKeyboardShare {
         let modifiers: Int?
         /// Absent: no change; null: the controller page closed; a value: its state.
         let pad: SharedPad??
+        let mouse: [Int]?
+        let button: [Int]?
+        let wheel: Int?
 
         enum CodingKeys: String, CodingKey {
             case usage = "k"
             case down = "d"
             case modifiers = "m"
             case pad
+            case mouse
+            case button
+            case wheel
         }
 
         init(from decoder: any Decoder) throws {
@@ -147,6 +164,9 @@ final class CloudKeyboardShare {
             usage = try container.decodeIfPresent(Int.self, forKey: .usage)
             down = try container.decodeIfPresent(Bool.self, forKey: .down)
             modifiers = try container.decodeIfPresent(Int.self, forKey: .modifiers)
+            mouse = try container.decodeIfPresent([Int].self, forKey: .mouse)
+            button = try container.decodeIfPresent([Int].self, forKey: .button)
+            wheel = try container.decodeIfPresent(Int.self, forKey: .wheel)
             if container.contains(.pad) {
                 let state = try container.decodeIfPresent(SharedPad.self, forKey: .pad)
                 pad = .some(state)
