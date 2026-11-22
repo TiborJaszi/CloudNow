@@ -1499,8 +1499,7 @@ final nonisolated class InputSender: @unchecked Sendable {
             } else {
                 guard let slot = firstFreeSlot else { return }
                 virtualGamepadSlot = slot
-                gamepadBitmap |= Self.extendedGamepadBitmapMask(for: slot)
-                transmitGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
+                connectVirtualGamepad(slot: slot)
             }
         }
         virtualGamepadState = state
@@ -1509,6 +1508,29 @@ final nonisolated class InputSender: @unchecked Sendable {
             transmitGamepadSnapshot(mixed(realSnapshots[slot] ?? neutralSnapshot(bitmap: gamepadBitmap), state), slot: slot)
         } else {
             transmitGamepadSnapshot(snapshot(of: state), slot: slot)
+        }
+    }
+
+    /// On its own, the virtual controller connects as a DualSense where GFN takes one (like a
+    /// real one in `attachController`), so games show PlayStation buttons; otherwise as XInput.
+    private func connectVirtualGamepad(slot: Int) {
+        guard sonyGamepadEnabled else {
+            gamepadBitmap |= Self.extendedGamepadBitmapMask(for: slot)
+            transmitGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
+            return
+        }
+        let attachToken = UUID()
+        sonyAttachTokens[slot] = attachToken
+        sonySlots.insert(slot)
+        sendSonyDeviceChange(slot: slot, connected: true) { [weak self] disposition in
+            guard let self, isRunning, virtualGamepadSlot == slot, !virtualGamepadShared,
+                  sonyAttachTokens[slot] == attachToken
+            else { return }
+            sonyAttachTokens[slot] = nil
+            guard disposition != .accepted else { return }
+            sonySlots.remove(slot)
+            gamepadBitmap |= Self.extendedGamepadBitmapMask(for: slot)
+            transmitGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
         }
     }
 
@@ -1521,6 +1543,13 @@ final nonisolated class InputSender: @unchecked Sendable {
         if shared {
             transmitGamepadSnapshot(realSnapshots[slot] ?? neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
             realSnapshots[slot] = nil
+        } else if sonySlots.contains(slot) {
+            transmitGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
+            sendSonyDeviceChange(slot: slot, connected: false)
+            sonySlots.remove(slot)
+            sonyAttachTokens[slot] = nil
+            lastSnapshots[slot] = nil
+            lastSnapshotSend[slot] = nil
         } else {
             gamepadBitmap &= ~Self.extendedGamepadBitmapMask(for: slot)
             transmitGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)

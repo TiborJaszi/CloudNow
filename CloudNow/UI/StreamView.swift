@@ -56,7 +56,9 @@ struct StreamView: View {
     @Environment(GamesViewModel.self) var viewModel
     @Environment(CloudSessionCoordinator.self) private var cloudSessionCoordinator
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
     @State private var streamController = GFNStreamController()
+    @State private var backgroundLeaveTask: Task<Void, Never>?
     @State private var overlayState: StreamOverlayState = .none
     @State private var showExitConfirmation = false
     @State private var loadingPhase: LoadingPhase = .finding
@@ -147,7 +149,12 @@ struct StreamView: View {
             let generation = sessionAttemptState.generation
             await startSession(generation: generation)
         }
+        .onChange(of: scenePhase) { _, phase in
+            handleScenePhase(phase)
+        }
         .onDisappear {
+            backgroundLeaveTask?.cancel()
+            backgroundLeaveTask = nil
             cancelSessionAttempt()
             streamController.disconnect()
             releaseLocalPeerLease()
@@ -1188,6 +1195,34 @@ struct StreamView: View {
                 streamLog.error("reclaimSession: failed: \(error)")
                 return nil
             }
+        }
+    }
+
+    /// How long a stream keeps running while another app is in front (the app keeps playing
+    /// the stream's sound in the background) before it leaves like the Leave button.
+    static let backgroundGrace: Duration = .seconds(300)
+
+    /// Switching to another app keeps the stream for `backgroundGrace`, so something can be
+    /// checked and the game picked up again; coming back in time cancels the leave.
+    private func handleScenePhase(_ phase: ScenePhase) {
+        switch phase {
+        case .background:
+            guard streamController.state == .streaming, backgroundLeaveTask == nil else { return }
+            streamLog.info("In the background: leaving the stream in 5 minutes unless the app comes back")
+            backgroundLeaveTask = Task { @MainActor in
+                try? await Task.sleep(for: Self.backgroundGrace)
+                guard !Task.isCancelled else { return }
+                backgroundLeaveTask = nil
+                streamLog.info("Background for 5 minutes: leaving the stream")
+                leave()
+            }
+        case .active:
+            backgroundLeaveTask?.cancel()
+            backgroundLeaveTask = nil
+        case .inactive:
+            break
+        @unknown default:
+            break
         }
     }
 
