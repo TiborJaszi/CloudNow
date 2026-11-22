@@ -252,7 +252,7 @@ struct CloudNowSoundShareSettingsSection: View {
 
 /// App-wide (`CloudKeyboardShare`); takes effect within a few seconds, also during a stream.
 struct CloudNowKeyboardShareSettingsSection: View {
-    @AppStorage(CloudKeyboardShare.enabledDefaultsKey) private var isEnabled = false
+    @AppStorage(CloudKeyboardShare.enabledDefaultsKey) private var isEnabled = true
     @AppStorage(CloudKeyboardShare.addressDefaultsKey) private var address = CloudKeyboardShare.defaultAddress
 
     var body: some View {
