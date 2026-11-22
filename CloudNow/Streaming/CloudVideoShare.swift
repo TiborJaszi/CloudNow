@@ -13,9 +13,11 @@ private nonisolated let videoShareLog = Logger(subsystem: "com.owenselles.CloudN
 /// address) and sends frames only while the server says someone watches: `{"watch": <viewers>}`.
 /// `{"key": 1}` (a new viewer) makes the decoder ask GeForce NOW for a key frame, which the TV's
 /// own picture doesn't notice. Before every key frame comes `{"config": {"codec": "hevc"}}`,
-/// then each frame is a binary message: 1 byte (1 = key frame), the time in microseconds
-/// (8 bytes, big-endian) and the Annex-B access unit (VPS/SPS/PPS included in key frames). If
-/// the network falls behind, frames are dropped until the next key frame.
+/// then each frame is a binary message: 1 byte (1 = key frame), the frame's time in microseconds
+/// (8 bytes, big-endian: GeForce NOW's RTP timestamp, unwrapped, so a page can pace the frames
+/// as they were captured rather than as they arrived) and the Annex-B access unit (VPS/SPS/PPS
+/// included in key frames). If the network falls behind, frames are dropped until the next key
+/// frame.
 nonisolated final class CloudVideoShare: @unchecked Sendable {
     static let shared = CloudVideoShare()
 
@@ -28,6 +30,8 @@ nonisolated final class CloudVideoShare: @unchecked Sendable {
     private static let idleTimeout: TimeInterval = 3
     private static let retryInterval: TimeInterval = 2
     private static let configMessage = "{\"config\": {\"codec\": \"hevc\"}}"
+    /// An RTP timestamp step larger than this (90 kHz ticks: 10 s) is a new stream, not time passing.
+    private static let maxRTPStep: UInt32 = 900_000
 
     private nonisolated struct State {
         var lastFrameTime: TimeInterval = 0
@@ -35,6 +39,9 @@ nonisolated final class CloudVideoShare: @unchecked Sendable {
         var wantsKeyFrame = false
         var waitsForKeyFrame = true
         var inFlight = 0
+        var lastRTPTimestamp: UInt32?
+        /// 90 kHz ticks since the first frame, across the 32-bit wrap.
+        var rtpTicks: UInt64 = 0
     }
 
     private let state = OSAllocatedUnfairLock(initialState: State())
@@ -57,28 +64,37 @@ nonisolated final class CloudVideoShare: @unchecked Sendable {
         return URL(string: address.trimmingCharacters(in: .whitespaces))
     }
 
-    /// Called by the decoder for every access unit it decoded: only a timestamp unless someone
-    /// watches. Returns whether the decoder should ask GeForce NOW for a key frame.
-    func offer(_ accessUnit: Data, isKeyFrame: Bool) -> Bool {
+    /// Called by the decoder for every access unit it decoded (`rtpTimestamp`: its 90 kHz RTP
+    /// time): only bookkeeping unless someone watches. Returns whether the decoder should ask
+    /// GeForce NOW for a key frame.
+    func offer(_ accessUnit: Data, isKeyFrame: Bool, rtpTimestamp: UInt32) -> Bool {
         let now = Self.now
-        let (isDue, wantsKeyFrame) = state.withLock { state -> (Bool, Bool) in
+        let (isDue, wantsKeyFrame, ticks) = state.withLock { state -> (Bool, Bool, UInt64) in
             state.lastFrameTime = now
-            guard state.isWatched else { return (false, false) }
+            if let last = state.lastRTPTimestamp {
+                let step = rtpTimestamp &- last
+                if step <= Self.maxRTPStep {
+                    state.rtpTicks &+= UInt64(step)
+                }
+            }
+            state.lastRTPTimestamp = rtpTimestamp
+            let ticks = state.rtpTicks
+            guard state.isWatched else { return (false, false, ticks) }
             let wantsKeyFrame = state.wantsKeyFrame
             state.wantsKeyFrame = false
             if isKeyFrame {
                 state.waitsForKeyFrame = false
             }
             if state.waitsForKeyFrame {
-                return (false, wantsKeyFrame)
+                return (false, wantsKeyFrame, ticks)
             }
             guard state.inFlight < Self.maxInFlight else {
                 // The network fell behind: skip to the next key frame, and ask for one.
                 state.waitsForKeyFrame = true
-                return (false, true)
+                return (false, true, ticks)
             }
             state.inFlight += 1
-            return (true, wantsKeyFrame)
+            return (true, wantsKeyFrame, ticks)
         }
         if timerStarted.compareExchange(expected: false, desired: true, ordering: .relaxed).exchanged {
             queue.async { [self] in startTimer() }
@@ -87,7 +103,7 @@ nonisolated final class CloudVideoShare: @unchecked Sendable {
             // The decoder's buffer belongs to WebRTC once decode returns: one copy, while watched.
             var message = Data(capacity: accessUnit.count + 9)
             message.append(isKeyFrame ? 1 : 0)
-            withUnsafeBytes(of: UInt64(now * 1_000_000).bigEndian) { message.append(contentsOf: $0) }
+            withUnsafeBytes(of: (ticks * 100 / 9).bigEndian) { message.append(contentsOf: $0) }   // µs
             message.append(accessUnit)
             queue.async { [self] in deliver(message, isKeyFrame: isKeyFrame) }
         }
