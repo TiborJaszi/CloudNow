@@ -250,6 +250,31 @@ struct CloudNowSoundShareSettingsSection: View {
     }
 }
 
+/// App-wide (`CloudKeyboardShare`); takes effect within a few seconds, also during a stream.
+struct CloudNowKeyboardShareSettingsSection: View {
+    @AppStorage(CloudKeyboardShare.enabledDefaultsKey) private var isEnabled = false
+    @AppStorage(CloudKeyboardShare.addressDefaultsKey) private var address = CloudKeyboardShare.defaultAddress
+
+    var body: some View {
+        Section(L10n.text("share_keyboard")) {
+            Toggle(isOn: $isEnabled) {
+                CloudNowSettingLabel(
+                    title: L10n.text("share_keyboard"),
+                    description: L10n.text("share_keyboard_description")
+                )
+            }
+            .accessibilityIdentifier("settings.keyboardShare.enabled")
+            if isEnabled {
+                TextField(L10n.text("share_screen_address"), text: $address)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .keyboardType(.URL)
+                    .accessibilityIdentifier("settings.keyboardShare.address")
+            }
+        }
+    }
+}
+
 struct CloudNowDiagnosticsSettingsSection: View {
     @Binding var diagnosticsEnabled: Bool
     @Binding var enableRtcEventLog: Bool
@@ -1208,6 +1233,8 @@ struct SettingsView: View {
                 CloudNowScreenShareSettingsSection()
 
                 CloudNowSoundShareSettingsSection()
+
+                CloudNowKeyboardShareSettingsSection()
 
                 CloudNowControllerSettingsSection(
                     rumbleEnabled: $vm.streamSettings.rumbleEnabled,

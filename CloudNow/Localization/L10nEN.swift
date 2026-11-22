@@ -207,6 +207,8 @@ enum L10nEN {
         "share_screen_address": "Address",
         "share_sound": "Share Sound",
         "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
+        "share_keyboard": "Share Keyboard",
+        "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "microphone_description": "Enables voice chat via a connected Bluetooth headset or AirPods. Requires microphone permission.",
         "controller": "Controller",
         "deadzone": "Deadzone",

@@ -207,6 +207,8 @@ enum L10nTH {
         "share_screen_address": "Address",
         "share_sound": "Share Sound",
         "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
+        "share_keyboard": "Share Keyboard",
+        "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "microphone_description": "เปิดใช้งานแชตเสียงผ่านหูฟัง Bluetooth หรือ AirPods ที่เชื่อมต่อ ต้องขอสิทธิ์ไมโครโฟน",
         "microphone_permission_denied_message": "CloudNow ถูกปิดกั้นไม่ให้เข้าถึงไมโครโฟน เปิดใช้ได้ในการตั้งค่า Apple TV > ทั่วไป > ความเป็นส่วนตัวและความปลอดภัย > ไมโครโฟน",
         "open_settings": "เปิดการตั้งค่า",

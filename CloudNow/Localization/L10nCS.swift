@@ -177,6 +177,8 @@ enum L10nCS {
         "share_screen_address": "Address",
         "share_sound": "Share Sound",
         "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
+        "share_keyboard": "Share Keyboard",
+        "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "microphone_description": "Povolí hlasový chat přes připojený Bluetooth headset nebo AirPods. Vyžaduje oprávnění k mikrofonu.",
         "microphone_permission_denied_message": "Přístup k mikrofonu je pro CloudNow zakázán. Povolte jej v Nastavení Apple TV > Obecné > Soukromí a zabezpečení > Mikrofon.",
         "open_settings": "Otevřít Nastavení",

@@ -174,6 +174,8 @@ enum L10nES {
         "share_screen_address": "Address",
         "share_sound": "Share Sound",
         "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
+        "share_keyboard": "Share Keyboard",
+        "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "microphone_description": "Activa el chat de voz mediante unos auriculares Bluetooth o AirPods conectados. Requiere permiso de micrófono.",
         "microphone_permission_denied_message": "El acceso al micrófono está desactivado para CloudNow. Actívalo en Ajustes del Apple TV > General > Privacidad y seguridad > Micrófono.",
         "open_settings": "Abrir Ajustes",

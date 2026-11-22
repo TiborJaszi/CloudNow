@@ -207,6 +207,8 @@ enum L10nNL {
         "share_screen_address": "Address",
         "share_sound": "Share Sound",
         "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
+        "share_keyboard": "Share Keyboard",
+        "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "microphone_description": "Schakelt voicechat in via een aangesloten Bluetooth-headset of AirPods. Vereist microfoontoestemming.",
         "microphone_permission_denied_message": "Microfoontoegang is uitgeschakeld voor CloudNow. Schakel deze in via Apple TV-instellingen > Algemeen > Privacy en beveiliging > Microfoon.",
         "open_settings": "Open Instellingen",
