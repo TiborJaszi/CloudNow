@@ -210,7 +210,7 @@ enum L10nPL {
         "share_keyboard": "Share Keyboard",
         "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "share_video": "Share Video",
-        "share_video_description": "Streams the game as H.264 video to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Only works on the local network.",
+        "share_video_description": "Passes the stream on, exactly as it arrives (H.265), to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Nothing is re-encoded. Only works on the local network.",
         "microphone_description": "Włącza czat głosowy przez podłączony zestaw Bluetooth lub AirPods. Wymaga zgody na mikrofon.",
         "microphone_permission_denied_message": "Dostęp do mikrofonu jest wyłączony dla CloudNow. Włącz go w Ustawienia Apple TV > Ogólne > Prywatność i ochrona > Mikrofon.",
         "open_settings": "Otwórz ustawienia",

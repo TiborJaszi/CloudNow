@@ -219,7 +219,8 @@ final nonisolated class CloudVideoDecoderH265: NSObject, LKRTCVideoDecoder, @unc
 
         // Keyframes carry VPS/SPS/PPS in-band (GFN requests sps-pps-idr-in-keyframe).
         // Rebuild the format description when parameter sets arrive and differ.
-        if let parameterSets = H265AnnexBConverter.parameterSets(in: data, nalus: nalus),
+        let keyFrameParameterSets = H265AnnexBConverter.parameterSets(in: data, nalus: nalus)
+        if let parameterSets = keyFrameParameterSets,
            parameterSets.signature != parameterSetSignature
         {
             if let format = Self.makeFormatDescription(data: data, parameterSets: parameterSets) {
@@ -271,8 +272,13 @@ final nonisolated class CloudVideoDecoderH265: NSObject, LKRTCVideoDecoder, @unc
             h265Log.error("decode failed: \(status)")
             return -1
         }
-        return 0
+        // Share Video passes the frame on as it came; a new viewer needs a key frame first.
+        let wantsKeyFrame = CloudVideoShare.shared.offer(data, isKeyFrame: keyFrameParameterSets != nil)
+        return wantsKeyFrame ? Self.okRequestKeyFrame : 0
     }
+
+    /// WEBRTC_VIDEO_CODEC_OK_REQUEST_KEYFRAME: decoded fine, but ask the sender for a key frame.
+    private static let okRequestKeyFrame = 4
 
     // MARK: - VideoToolbox session
 
