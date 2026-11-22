@@ -183,6 +183,8 @@ enum L10nID {
         "share_sound_description": "Sends the stream's sound, as it plays, to this address on your network (a WebSocket), e.g. for a tool that listens to the game. Only works on the local network.",
         "share_keyboard": "Share Keyboard",
         "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
+        "share_video": "Share Video",
+        "share_video_description": "Streams the game as H.264 video to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Only works on the local network.",
         "microphone_description": "Mengaktifkan obrolan suara melalui headset Bluetooth atau AirPods yang tersambung. Membutuhkan izin mikrofon.",
         "microphone_permission_denied_message": "Akses mikrofon dinonaktifkan untuk CloudNow. Aktifkan di Pengaturan Apple TV > Umum > Privasi & Keamanan > Mikrofon.",
         "open_settings": "Buka Pengaturan",

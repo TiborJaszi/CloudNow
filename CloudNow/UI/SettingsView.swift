@@ -275,6 +275,31 @@ struct CloudNowKeyboardShareSettingsSection: View {
     }
 }
 
+/// App-wide (`CloudVideoShare`); takes effect within a second, also during a stream.
+struct CloudNowVideoShareSettingsSection: View {
+    @AppStorage(CloudVideoShare.enabledDefaultsKey) private var isEnabled = true
+    @AppStorage(CloudVideoShare.addressDefaultsKey) private var address = CloudVideoShare.defaultAddress
+
+    var body: some View {
+        Section(L10n.text("share_video")) {
+            Toggle(isOn: $isEnabled) {
+                CloudNowSettingLabel(
+                    title: L10n.text("share_video"),
+                    description: L10n.text("share_video_description")
+                )
+            }
+            .accessibilityIdentifier("settings.videoShare.enabled")
+            if isEnabled {
+                TextField(L10n.text("share_screen_address"), text: $address)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .keyboardType(.URL)
+                    .accessibilityIdentifier("settings.videoShare.address")
+            }
+        }
+    }
+}
+
 struct CloudNowDiagnosticsSettingsSection: View {
     @Binding var diagnosticsEnabled: Bool
     @Binding var enableRtcEventLog: Bool
@@ -1235,6 +1260,8 @@ struct SettingsView: View {
                 CloudNowSoundShareSettingsSection()
 
                 CloudNowKeyboardShareSettingsSection()
+
+                CloudNowVideoShareSettingsSection()
 
                 CloudNowControllerSettingsSection(
                     rumbleEnabled: $vm.streamSettings.rumbleEnabled,
