@@ -749,6 +749,11 @@ final nonisolated class InputSender: @unchecked Sendable {
     private var lastSnapshotSend: [Int: UInt64] = [:]
     private var virtualGamepadSlot: Int?
     private var virtualGamepadState: VirtualGamepadState?
+    /// The virtual controller shares a real controller's slot (mixed into it, see
+    /// `sendGamepadSnapshot`), so the game sees one controller, of the real one's kind.
+    private var virtualGamepadShared = false
+    /// The shared slot's real controller as it reports itself, before the mix.
+    private var realSnapshots: [Int: GamepadSnapshot] = [:]
 
     private var lastMicroDpad: (x: Float, y: Float) = (0, 0)
     private var lastControllerTouchpad: (x: Float, y: Float) = (0, 0)
@@ -835,11 +840,13 @@ final nonisolated class InputSender: @unchecked Sendable {
             controllerSlots.removeAll()
             sonySlots.removeAll()
             sonyAttachTokens.removeAll()
-            if let slot = virtualGamepadSlot {
-                sendGamepadSnapshot(neutralSnapshot(bitmap: 0), slot: slot, force: true)
+            if let slot = virtualGamepadSlot, !virtualGamepadShared {
+                transmitGamepadSnapshot(neutralSnapshot(bitmap: 0), slot: slot, force: true)
             }
             virtualGamepadSlot = nil
             virtualGamepadState = nil
+            virtualGamepadShared = false
+            realSnapshots.removeAll()
             gamepadBitmap = 0
             lastSnapshots.removeAll()
             lastSnapshotSend.removeAll()
@@ -1013,8 +1020,8 @@ final nonisolated class InputSender: @unchecked Sendable {
         for controller in extendedControllers.sorted(by: { slot(for: $0) < slot(for: $1) }) {
             sendGamepadState(for: controller, sampleOverlay: true, now: now)
         }
-        if let slot = virtualGamepadSlot, let state = virtualGamepadState {
-            sendGamepadSnapshot(snapshot(of: state), slot: slot, now: now)
+        if let slot = virtualGamepadSlot, let state = virtualGamepadState, !virtualGamepadShared {
+            transmitGamepadSnapshot(snapshot(of: state), slot: slot, now: now)
         }
 
         if remoteMode == .dualsense,
@@ -1242,7 +1249,22 @@ final nonisolated class InputSender: @unchecked Sendable {
         )
     }
 
+    /// Every real controller's snapshot: in the slot the virtual controller shares, it's mixed in.
     private func sendGamepadSnapshot(
+        _ snapshot: GamepadSnapshot,
+        slot: Int,
+        now: UInt64 = DispatchTime.now().uptimeNanoseconds,
+        force: Bool = false
+    ) {
+        guard virtualGamepadShared, slot == virtualGamepadSlot, let state = virtualGamepadState else {
+            transmitGamepadSnapshot(snapshot, slot: slot, now: now, force: force)
+            return
+        }
+        realSnapshots[slot] = snapshot
+        transmitGamepadSnapshot(mixed(snapshot, state), slot: slot, now: now, force: force)
+    }
+
+    private func transmitGamepadSnapshot(
         _ snapshot: GamepadSnapshot,
         slot: Int,
         now: UInt64 = DispatchTime.now().uptimeNanoseconds,
@@ -1440,24 +1462,64 @@ final nonisolated class InputSender: @unchecked Sendable {
     private func applyVirtualGamepad(_ state: VirtualGamepadState?) {
         guard isRunning else { return }
         guard let state else {
-            guard let slot = virtualGamepadSlot else { return }
-            virtualGamepadSlot = nil
-            virtualGamepadState = nil
-            gamepadBitmap &= ~Self.extendedGamepadBitmapMask(for: slot)
-            sendGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
-            lastSnapshots[slot] = nil
-            lastSnapshotSend[slot] = nil
+            disconnectVirtualGamepad()
             return
         }
         if virtualGamepadSlot == nil {
-            guard let slot = firstFreeSlot else { return }
-            virtualGamepadSlot = slot
-            gamepadBitmap |= Self.extendedGamepadBitmapMask(for: slot)
-            sendGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
+            if let realSlot = controllerSlots.values.min() {
+                // Mixed into the real controller: games that read only the first controller
+                // still see it, and a DualSense stays a DualSense.
+                virtualGamepadSlot = realSlot
+                virtualGamepadShared = true
+                realSnapshots[realSlot] = lastSnapshots[realSlot] ?? neutralSnapshot(bitmap: gamepadBitmap)
+            } else {
+                guard let slot = firstFreeSlot else { return }
+                virtualGamepadSlot = slot
+                gamepadBitmap |= Self.extendedGamepadBitmapMask(for: slot)
+                transmitGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
+            }
         }
         virtualGamepadState = state
         guard !isPaused, let slot = virtualGamepadSlot else { return }
-        sendGamepadSnapshot(snapshot(of: state), slot: slot)
+        if virtualGamepadShared {
+            transmitGamepadSnapshot(mixed(realSnapshots[slot] ?? neutralSnapshot(bitmap: gamepadBitmap), state), slot: slot)
+        } else {
+            transmitGamepadSnapshot(snapshot(of: state), slot: slot)
+        }
+    }
+
+    private func disconnectVirtualGamepad() {
+        guard let slot = virtualGamepadSlot else { return }
+        let shared = virtualGamepadShared
+        virtualGamepadSlot = nil
+        virtualGamepadState = nil
+        virtualGamepadShared = false
+        if shared {
+            transmitGamepadSnapshot(realSnapshots[slot] ?? neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
+            realSnapshots[slot] = nil
+        } else {
+            gamepadBitmap &= ~Self.extendedGamepadBitmapMask(for: slot)
+            transmitGamepadSnapshot(neutralSnapshot(bitmap: gamepadBitmap), slot: slot, force: true)
+            lastSnapshots[slot] = nil
+            lastSnapshotSend[slot] = nil
+        }
+    }
+
+    /// A real controller's snapshot with the virtual one's pressed buttons, triggers and any
+    /// deflected stick on top.
+    private func mixed(_ real: GamepadSnapshot, _ state: VirtualGamepadState) -> GamepadSnapshot {
+        let leftVirtual = state.leftStickX != 0 || state.leftStickY != 0
+        let rightVirtual = state.rightStickX != 0 || state.rightStickY != 0
+        return GamepadSnapshot(
+            buttons: real.buttons | state.buttons,
+            leftTrigger: max(real.leftTrigger, state.leftTrigger),
+            rightTrigger: max(real.rightTrigger, state.rightTrigger),
+            leftStickX: leftVirtual ? state.leftStickX : real.leftStickX,
+            leftStickY: leftVirtual ? state.leftStickY : real.leftStickY,
+            rightStickX: rightVirtual ? state.rightStickX : real.rightStickX,
+            rightStickY: rightVirtual ? state.rightStickY : real.rightStickY,
+            bitmap: gamepadBitmap
+        )
     }
 
     private func snapshot(of state: VirtualGamepadState) -> GamepadSnapshot {
@@ -2087,6 +2149,13 @@ final nonisolated class InputSender: @unchecked Sendable {
         controller.playerIndex = .indexUnset
         let id = ObjectIdentifier(controller)
         if let slot = controllerSlots.removeValue(forKey: id) {
+            if slot == virtualGamepadSlot, virtualGamepadShared {
+                // The next state from the server connects the virtual controller on its own.
+                virtualGamepadSlot = nil
+                virtualGamepadState = nil
+                virtualGamepadShared = false
+                realSnapshots[slot] = nil
+            }
             let wasSony = sonySlots.contains(slot)
             sonyAttachTokens[slot] = nil
             if wasSony {
