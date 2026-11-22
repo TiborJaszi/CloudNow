@@ -179,7 +179,7 @@ enum L10nKO {
         "share_keyboard": "Share Keyboard",
         "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "share_video": "Share Video",
-        "share_video_description": "Streams the game as H.264 video to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Only works on the local network.",
+        "share_video_description": "Passes the stream on, exactly as it arrives (H.265), to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Nothing is re-encoded. Only works on the local network.",
         "microphone_description": "연결된 Bluetooth 헤드셋 또는 AirPods를 통해 음성 채팅을 활성화합니다. 마이크 권한이 필요합니다.",
         "microphone_permission_denied_message": "CloudNow의 마이크 접근이 비활성화되어 있습니다. Apple TV 설정 > 일반 > 개인정보 보호 및 보안 > 마이크에서 활성화하세요.",
         "open_settings": "설정 열기",

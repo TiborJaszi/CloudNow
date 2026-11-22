@@ -668,7 +668,6 @@ private final nonisolated class WebRTCFrameRenderer: NSObject, LKRTCVideoRendere
             return
         }
         CloudScreenShare.shared.offer(cvBuf)
-        CloudVideoShare.shared.offer(cvBuf)
 
         var inspectionCache = state.withLock { $0.inspectionCache }
         guard let inspection = inspectionCache.resolve(

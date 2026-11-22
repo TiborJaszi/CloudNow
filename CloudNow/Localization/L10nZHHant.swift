@@ -205,7 +205,7 @@ enum L10nZHHant {
         "share_keyboard": "Share Keyboard",
         "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "share_video": "Share Video",
-        "share_video_description": "Streams the game as H.264 video to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Only works on the local network.",
+        "share_video_description": "Passes the stream on, exactly as it arrives (H.265), to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Nothing is re-encoded. Only works on the local network.",
         "microphone_description": "透過已連接的 Bluetooth 耳機或 AirPods 啟用語音聊天。需要麥克風權限。",
         "microphone_permission_denied_message": "CloudNow 的麥克風存取權已關閉。請前往 Apple TV「設定」>「一般」>「隱私權與安全性」>「麥克風」將其開啟。",
         "open_settings": "開啟設定",

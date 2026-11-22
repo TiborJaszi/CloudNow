@@ -208,7 +208,7 @@ enum L10nNB {
         "share_keyboard": "Share Keyboard",
         "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "share_video": "Share Video",
-        "share_video_description": "Streams the game as H.264 video to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Only works on the local network.",
+        "share_video_description": "Passes the stream on, exactly as it arrives (H.265), to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Nothing is re-encoded. Only works on the local network.",
         "microphone_description": "Aktiverer talchat via et tilkoblet Bluetooth-headset eller AirPods. Krever mikrofontillatelse.",
         "microphone_permission_denied_message": "Mikrofontilgang er deaktivert for CloudNow. Aktiver den i Apple TV-innstillinger > Generelt > Personvern og sikkerhet > Mikrofon.",
         "open_settings": "Åpne innstillinger",

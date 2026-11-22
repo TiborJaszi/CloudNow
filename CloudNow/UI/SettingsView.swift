@@ -254,7 +254,7 @@ struct CloudNowKeyboardShareSettingsSection: View {
     }
 }
 
-/// App-wide (`CloudVideoShare`); takes effect within a second, also during a stream.
+/// App-wide (`CloudVideoShare`); takes effect within a second, also during a stream (H.265 streams).
 struct CloudNowVideoShareSettingsSection: View {
     @AppStorage(CloudVideoShare.enabledDefaultsKey) private var isEnabled = true
     @AppStorage(CloudVideoShare.addressDefaultsKey) private var address = CloudVideoShare.defaultAddress
