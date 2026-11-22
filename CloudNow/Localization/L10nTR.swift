@@ -200,8 +200,6 @@ enum L10nTR {
         "clear_use_automatic_routing": "Temizle - otomatik yönlendirmeyi kullan",
         "microphone": "Mikrofon",
         "use_microphone": "Mikrofonu kullan",
-        "airplay_audio": "AirPlay Sesi",
-        "airplay_audio_description": "tvOS'un yayın sesini AirPlay hoparlörlerine göndermesine izin verir. Yaklaşık 2 sn ses gecikmesi ekler ve mikrofonu kapatır. Bir sonraki yayından itibaren geçerlidir.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

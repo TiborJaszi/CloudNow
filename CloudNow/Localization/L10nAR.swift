@@ -170,8 +170,6 @@ enum L10nAR {
         "clear_use_automatic_routing": "مسح - استخدام التوجيه التلقائي",
         "microphone": "الميكروفون",
         "use_microphone": "استخدام الميكروفون",
-        "airplay_audio": "صوت AirPlay",
-        "airplay_audio_description": "يتيح لـ tvOS إرسال صوت البث إلى سماعات AirPlay. يضيف تأخيرًا صوتيًا بنحو ثانيتين ويوقف الميكروفون. يُطبَّق من البث التالي.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

@@ -170,8 +170,6 @@ enum L10nHI {
         "clear_use_automatic_routing": "साफ करें - ऑटोमैटिक रूटिंग का उपयोग करें",
         "microphone": "माइक्रोफ़ोन",
         "use_microphone": "माइक्रोफ़ोन का उपयोग करें",
-        "airplay_audio": "AirPlay ऑडियो",
-        "airplay_audio_description": "tvOS को स्ट्रीम की आवाज़ AirPlay स्पीकर पर भेजने देता है। लगभग 2 सेकंड की ऑडियो देरी जोड़ता है और माइक्रोफ़ोन बंद करता है। अगली स्ट्रीम से लागू।",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

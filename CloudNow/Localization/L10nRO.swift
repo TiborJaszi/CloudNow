@@ -200,8 +200,6 @@ enum L10nRO {
         "clear_use_automatic_routing": "Șterge - folosește rutare automată",
         "microphone": "Microfon",
         "use_microphone": "Folosește microfonul",
-        "airplay_audio": "Audio AirPlay",
-        "airplay_audio_description": "Permite tvOS să trimită sunetul streamului către boxe AirPlay. Adaugă aproximativ 2 s de întârziere audio și oprește microfonul. Se aplică de la următorul stream.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

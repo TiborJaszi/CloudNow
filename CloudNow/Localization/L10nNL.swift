@@ -200,8 +200,6 @@ enum L10nNL {
         "clear_use_automatic_routing": "Wissen - automatische routering gebruiken",
         "microphone": "Microfoon",
         "use_microphone": "Microfoon gebruiken",
-        "airplay_audio": "AirPlay-audio",
-        "airplay_audio_description": "Laat tvOS het geluid van de stream naar AirPlay-speakers sturen. Geeft ongeveer 2 s audiovertraging en zet de microfoon uit. Geldt vanaf de volgende stream.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

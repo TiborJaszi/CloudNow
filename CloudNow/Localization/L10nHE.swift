@@ -170,8 +170,6 @@ enum L10nHE {
         "clear_use_automatic_routing": "נקה - השתמש בניתוב אוטומטי",
         "microphone": "מיקרופון",
         "use_microphone": "השתמש במיקרופון",
-        "airplay_audio": "שמע AirPlay",
-        "airplay_audio_description": "מאפשר ל-tvOS לשלוח את צליל הסטרים לרמקולי AirPlay. מוסיף כ-2 שניות השהיית שמע ומכבה את המיקרופון. חל מהסטרים הבא.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

@@ -200,8 +200,6 @@ enum L10nMS {
         "clear_use_automatic_routing": "Kosongkan - gunakan penghalaan automatik",
         "microphone": "Mikrofon",
         "use_microphone": "Gunakan mikrofon",
-        "airplay_audio": "Audio AirPlay",
-        "airplay_audio_description": "Membenarkan tvOS menghantar bunyi strim ke pembesar suara AirPlay. Menambah kelewatan audio kira-kira 2 saat dan mematikan mikrofon. Berkuat kuasa mulai strim seterusnya.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

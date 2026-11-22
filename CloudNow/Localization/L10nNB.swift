@@ -200,8 +200,6 @@ enum L10nNB {
         "clear_use_automatic_routing": "Tøm - bruk automatisk ruting",
         "microphone": "Mikrofon",
         "use_microphone": "Bruk mikrofon",
-        "airplay_audio": "AirPlay-lyd",
-        "airplay_audio_description": "Lar tvOS sende lyden fra strømmen til AirPlay-høyttalere. Gir omtrent 2 s lydforsinkelse og slår av mikrofonen. Gjelder fra neste strøm.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

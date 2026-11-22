@@ -200,8 +200,6 @@ enum L10nRU {
         "clear_use_automatic_routing": "Очистить - использовать автоматическую маршрутизацию",
         "microphone": "Микрофон",
         "use_microphone": "Использовать микрофон",
-        "airplay_audio": "Звук через AirPlay",
-        "airplay_audio_description": "Позволяет tvOS выводить звук трансляции на колонки AirPlay. Добавляет около 2 с задержки звука и отключает микрофон. Применяется со следующей трансляции.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

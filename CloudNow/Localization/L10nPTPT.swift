@@ -200,8 +200,6 @@ enum L10nPTPT {
         "clear_use_automatic_routing": "Limpar - usar encaminhamento automático",
         "microphone": "Microfone",
         "use_microphone": "Usar microfone",
-        "airplay_audio": "Áudio AirPlay",
-        "airplay_audio_description": "Permite que o tvOS envie o som do stream para colunas AirPlay. Adiciona cerca de 2 s de atraso no áudio e desliga o microfone. Aplica-se a partir do próximo stream.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

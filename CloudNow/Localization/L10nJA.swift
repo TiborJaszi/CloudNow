@@ -171,8 +171,6 @@ enum L10nJA {
         "clear_use_automatic_routing": "クリア - 自動ルーティングを使用",
         "microphone": "マイク",
         "use_microphone": "マイクを使用",
-        "airplay_audio": "AirPlayオーディオ",
-        "airplay_audio_description": "tvOSがストリームの音声をAirPlayスピーカーに送れるようにします。音声に約2秒の遅延が加わり、マイクはオフになります。次のストリームから適用されます。",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

@@ -167,8 +167,6 @@ enum L10nDE {
         "clear_use_automatic_routing": "Löschen - automatisches Routing verwenden",
         "microphone": "Mikrofon",
         "use_microphone": "Mikrofon verwenden",
-        "airplay_audio": "AirPlay-Audio",
-        "airplay_audio_description": "Erlaubt tvOS, den Ton des Streams an AirPlay-Lautsprecher zu senden. Verzögert den Ton um etwa 2 s und schaltet das Mikrofon aus. Gilt ab dem nächsten Stream.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

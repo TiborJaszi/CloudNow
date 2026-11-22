@@ -170,8 +170,6 @@ enum L10nCS {
         "clear_use_automatic_routing": "Vymazat - použít automatické směrování",
         "microphone": "Mikrofon",
         "use_microphone": "Použít mikrofon",
-        "airplay_audio": "Zvuk přes AirPlay",
-        "airplay_audio_description": "Umožní tvOS posílat zvuk streamu do reproduktorů AirPlay. Přidá asi 2 s zpoždění zvuku a vypne mikrofon. Platí od příštího streamu.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

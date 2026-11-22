@@ -174,8 +174,6 @@ enum L10nHU {
         "clear_use_automatic_routing": "Törlés - automatikus útválasztás használata",
         "microphone": "Mikrofon",
         "use_microphone": "Mikrofon használata",
-        "airplay_audio": "AirPlay-hang",
-        "airplay_audio_description": "A tvOS AirPlay-hangszórókra is küldheti a stream hangját. Kb. 2 mp hangkésést okoz, és kikapcsolja a mikrofont. A következő streamtől érvényes.",
         "share_screen": "Képernyő megosztása",
         "share_screen_description": "Másodpercenként néhány képkockát küld a streamből erre a címre a hálózatodon, pl. hogy telefonon nézhesd a játékot. Csak a helyi hálózaton működik.",
         "share_screen_address": "Cím",

@@ -170,8 +170,6 @@ enum L10nDA {
         "clear_use_automatic_routing": "Ryd - brug automatisk routing",
         "microphone": "Mikrofon",
         "use_microphone": "Brug mikrofon",
-        "airplay_audio": "AirPlay-lyd",
-        "airplay_audio_description": "Lader tvOS sende streamens lyd til AirPlay-højttalere. Giver ca. 2 s lydforsinkelse og slår mikrofonen fra. Gælder fra næste stream.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

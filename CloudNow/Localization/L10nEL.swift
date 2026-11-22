@@ -170,8 +170,6 @@ enum L10nEL {
         "clear_use_automatic_routing": "Εκκαθάριση - χρήση αυτόματης δρομολόγησης",
         "microphone": "Μικρόφωνο",
         "use_microphone": "Χρήση μικροφώνου",
-        "airplay_audio": "Ήχος AirPlay",
-        "airplay_audio_description": "Επιτρέπει στο tvOS να στέλνει τον ήχο της ροής σε ηχεία AirPlay. Προσθέτει περίπου 2 δ. καθυστέρηση ήχου και απενεργοποιεί το μικρόφωνο. Ισχύει από την επόμενη ροή.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

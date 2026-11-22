@@ -200,8 +200,6 @@ enum L10nSV {
         "clear_use_automatic_routing": "Rensa - använd automatisk routning",
         "microphone": "Mikrofon",
         "use_microphone": "Använd mikrofon",
-        "airplay_audio": "AirPlay-ljud",
-        "airplay_audio_description": "Låter tvOS skicka streamens ljud till AirPlay-högtalare. Ger cirka 2 s ljudfördröjning och stänger av mikrofonen. Gäller från nästa stream.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

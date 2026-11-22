@@ -171,8 +171,6 @@ enum L10nKO {
         "clear_use_automatic_routing": "지우기 - 자동 라우팅 사용",
         "microphone": "마이크",
         "use_microphone": "마이크 사용",
-        "airplay_audio": "AirPlay 오디오",
-        "airplay_audio_description": "tvOS가 스트림 소리를 AirPlay 스피커로 보낼 수 있게 합니다. 오디오가 약 2초 지연되고 마이크가 꺼집니다. 다음 스트림부터 적용됩니다.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

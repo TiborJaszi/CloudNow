@@ -8,37 +8,6 @@ private nonisolated let cloudAudioSessionLog = Logger(
     category: "CloudAudioSession"
 )
 
-/// The playback audio-session shape, shared by `CloudAudioSessionCoordinator` and
-/// `CloudAudioDevice`. With the "AirPlay audio" setting on, the session declares long-form
-/// audio: tvOS only routes apps that do to AirPlay 2 speakers. That route buffers about two
-/// seconds and can't record, so the microphone stays off while it's set.
-nonisolated enum CloudPlaybackAudioSession {
-    static let airPlayDefaultsKey = "cloudAudio.airPlayAudio"
-
-    static var prefersAirPlay: Bool {
-        UserDefaults.standard.bool(forKey: airPlayDefaultsKey)
-    }
-
-    static var routeSharingPolicy: AVAudioSession.RouteSharingPolicy {
-        prefersAirPlay ? .longFormAudio : .default
-    }
-
-    static func apply(to session: AVAudioSession) throws {
-        try session.setCategory(
-            .playback,
-            mode: .default,
-            policy: routeSharingPolicy,
-            options: []
-        )
-    }
-
-    static func isApplied(to session: AVAudioSession) -> Bool {
-        session.category == .playback
-            && session.mode == .default
-            && session.routeSharingPolicy == routeSharingPolicy
-    }
-}
-
 /// Provider-neutral owner of the audio-session and microphone negotiation
 /// policy shared by native cloud-stream transports. It deliberately matches
 /// GFN's current permission, category, mode, buffer, and track constraints.
@@ -50,10 +19,6 @@ final class CloudAudioSessionCoordinator {
     }
 
     func requestMicrophonePermission(if requested: Bool) async -> Bool {
-        if requested, CloudPlaybackAudioSession.prefersAirPlay {
-            cloudAudioSessionLog.info("AirPlay audio is on; microphone stays off")
-            return false
-        }
         guard CloudMicrophoneRoutePolicy.shouldRequestPermission(
             microphoneEnabled: requested
         ) else { return false }
@@ -77,7 +42,6 @@ final class CloudAudioSessionCoordinator {
     func configure(microphoneAuthorized: Bool) -> Bool {
         let session = AVAudioSession.sharedInstance()
         if microphoneAuthorized,
-           !CloudPlaybackAudioSession.prefersAirPlay,
            session.availableCategories.contains(.playAndRecord)
         {
             do {
@@ -144,7 +108,7 @@ final class CloudAudioSessionCoordinator {
 
     private func configurePlayback(_ session: AVAudioSession) -> Bool {
         do {
-            try CloudPlaybackAudioSession.apply(to: session)
+            try session.setCategory(.playback, mode: .default, options: [])
             try session.setPreferredIOBufferDuration(0.01)
             try session.setActive(true)
         } catch {

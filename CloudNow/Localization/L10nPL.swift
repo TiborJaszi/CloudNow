@@ -200,8 +200,6 @@ enum L10nPL {
         "clear_use_automatic_routing": "Wyczyść - użyj automatycznego trasowania",
         "microphone": "Mikrofon",
         "use_microphone": "Użyj mikrofonu",
-        "airplay_audio": "Dźwięk AirPlay",
-        "airplay_audio_description": "Pozwala tvOS wysyłać dźwięk strumienia do głośników AirPlay. Dodaje ok. 2 s opóźnienia dźwięku i wyłącza mikrofon. Działa od następnego strumienia.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

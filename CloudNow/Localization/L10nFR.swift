@@ -167,8 +167,6 @@ enum L10nFR {
         "clear_use_automatic_routing": "Effacer - utiliser le routage automatique",
         "microphone": "Microphone",
         "use_microphone": "Utiliser le microphone",
-        "airplay_audio": "Audio AirPlay",
-        "airplay_audio_description": "Permet à tvOS d'envoyer le son du stream vers des enceintes AirPlay. Ajoute environ 2 s de décalage audio et désactive le micro. S'applique au prochain stream.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

@@ -174,8 +174,6 @@ enum L10nHR {
         "clear_use_automatic_routing": "Očisti - koristi automatsko usmjeravanje",
         "microphone": "Mikrofon",
         "use_microphone": "Koristi mikrofon",
-        "airplay_audio": "AirPlay zvuk",
-        "airplay_audio_description": "Omogućuje tvOS-u slanje zvuka streama na AirPlay zvučnike. Dodaje oko 2 s kašnjenja zvuka i isključuje mikrofon. Primjenjuje se od sljedećeg streama.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

@@ -170,8 +170,6 @@ enum L10nCA {
         "clear_use_automatic_routing": "Esborra - usa l'encaminament automàtic",
         "microphone": "Micròfon",
         "use_microphone": "Fes servir el micròfon",
-        "airplay_audio": "Àudio AirPlay",
-        "airplay_audio_description": "Permet que tvOS enviï el so del streaming a altaveus AirPlay. Afegeix uns 2 s de retard d'àudio i desactiva el micròfon. S'aplica des del proper streaming.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

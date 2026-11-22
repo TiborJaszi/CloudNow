@@ -171,8 +171,6 @@ enum L10nIT {
         "clear_use_automatic_routing": "Cancella - usa routing automatico",
         "microphone": "Microfono",
         "use_microphone": "Usa microfono",
-        "airplay_audio": "Audio AirPlay",
-        "airplay_audio_description": "Consente a tvOS di inviare l'audio dello stream agli altoparlanti AirPlay. Aggiunge circa 2 s di ritardo audio e disattiva il microfono. Vale dal prossimo stream.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

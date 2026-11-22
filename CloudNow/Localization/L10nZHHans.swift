@@ -197,8 +197,6 @@ enum L10nZHHans {
         "clear_use_automatic_routing": "清除 - 使用自动路由",
         "microphone": "麦克风",
         "use_microphone": "使用麦克风",
-        "airplay_audio": "AirPlay 音频",
-        "airplay_audio_description": "允许 tvOS 将串流声音发送到 AirPlay 扬声器。会增加约 2 秒音频延迟并关闭麦克风。从下一次串流起生效。",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

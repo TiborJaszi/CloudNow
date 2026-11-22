@@ -170,8 +170,6 @@ enum L10nFI {
         "clear_use_automatic_routing": "Tyhjennä - käytä automaattista reititystä",
         "microphone": "Mikrofoni",
         "use_microphone": "Käytä mikrofonia",
-        "airplay_audio": "AirPlay-ääni",
-        "airplay_audio_description": "Antaa tvOS:n lähettää striimin äänen AirPlay-kaiuttimiin. Lisää noin 2 s ääniviivettä ja sammuttaa mikrofonin. Koskee seuraavaa striimiä.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",

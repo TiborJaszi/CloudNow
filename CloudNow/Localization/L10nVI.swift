@@ -200,8 +200,6 @@ enum L10nVI {
         "clear_use_automatic_routing": "Xóa - dùng định tuyến tự động",
         "microphone": "Micro",
         "use_microphone": "Dùng micro",
-        "airplay_audio": "Âm thanh AirPlay",
-        "airplay_audio_description": "Cho phép tvOS gửi âm thanh của luồng tới loa AirPlay. Thêm khoảng 2 giây trễ âm thanh và tắt micrô. Áp dụng từ luồng tiếp theo.",
         "share_screen": "Share Screen",
         "share_screen_description": "Sends a few frames a second of the stream to this address on your network, e.g. to watch the game on a phone. Only works on the local network.",
         "share_screen_address": "Address",
