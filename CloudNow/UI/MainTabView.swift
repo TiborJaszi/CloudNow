@@ -69,6 +69,15 @@ struct MainTabView: View {
                 from: cloudSessionCoordinator.serverSession
             )
         }
+        .task {
+            // Play time left, for the home server (CloudUsageReport): asked again while the app is open.
+            guard loadsRemoteData else { return }
+            while !Task.isCancelled {
+                try? await Task.sleep(for: CloudUsageReport.refreshInterval)
+                guard scenePhase == .active, authManager.session?.provider.isNvidiaDirect == true else { continue }
+                _ = try? await viewModel.refreshInstallToPlayStatus(authManager: authManager)
+            }
+        }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background {
                 viewModel.cancelStoreConnection()

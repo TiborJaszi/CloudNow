@@ -79,6 +79,7 @@ actor MESClient {
                 "HTTP \((resp as? HTTPURLResponse)?.statusCode ?? -1): \(redactedHTTPBody(data))"
             )
         }
+        CloudUsageReport.send(data)
         return try parseMESResponse(data)
     }
 
