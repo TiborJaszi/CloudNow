@@ -208,7 +208,7 @@ enum L10nSK {
         "share_keyboard": "Share Keyboard",
         "share_keyboard_description": "While you play, a server at this address on your network (a WebSocket) can type into the game, e.g. a phone keyboard page. Only works on the local network.",
         "share_video": "Share Video",
-        "share_video_description": "Passes the stream on, exactly as it arrives (H.265), to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Nothing is re-encoded. Only works on the local network.",
+        "share_video_description": "Passes the stream on, exactly as it arrives (H.265), to this address on your network (a WebSocket) while a page there watches it, e.g. a phone controller that shows the game. Its sound goes along to /audio while the page listens, as the TV plays it. Nothing is re-encoded. Only works on the local network.",
         "microphone_description": "Povolí hlasový chat cez pripojený Bluetooth headset alebo AirPods. Vyžaduje povolenie mikrofónu.",
         "microphone_permission_denied_message": "Prístup k mikrofónu je pre CloudNow vypnutý. Povoľte ho v menu Nastavenia Apple TV > Všeobecné > Súkromie a bezpečnosť > Mikrofón.",
         "open_settings": "Otvoriť nastavenia",
