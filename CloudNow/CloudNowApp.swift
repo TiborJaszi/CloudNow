@@ -22,6 +22,7 @@ struct CloudNowApp: App {
     #endif
 
     init() {
+        ShareAddressMigration.run()
         #if DEBUG
             let arguments = ProcessInfo.processInfo.arguments
             let usesUITestFixtures =

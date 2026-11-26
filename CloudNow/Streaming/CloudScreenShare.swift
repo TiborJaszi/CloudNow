@@ -16,7 +16,7 @@ nonisolated final class CloudScreenShare: @unchecked Sendable {
 
     static let enabledDefaultsKey = "screenShare.enabled"
     static let addressDefaultsKey = "screenShare.address"
-    static let defaultAddress = "http://192.168.31.204:8796/screen/frame"
+    static let defaultAddress = "http://192.168.31.95:8796/screen/frame"
 
     private static let defaultInterval: TimeInterval = 1.0 / 3
     private static let failureInterval: TimeInterval = 5

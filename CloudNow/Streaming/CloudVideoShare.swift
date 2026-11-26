@@ -23,7 +23,7 @@ nonisolated final class CloudVideoShare: @unchecked Sendable {
 
     static let enabledDefaultsKey = "videoShare.enabled"
     static let addressDefaultsKey = "videoShare.address"
-    static let defaultAddress = "ws://192.168.31.204:8796/video"
+    static let defaultAddress = "ws://192.168.31.95:8796/video"
 
     /// Frames handed to the socket but not sent yet (about half a second at 60 fps): enough to
     /// ride out a network hiccup at GeForce NOW's bitrate; more and the network can't keep up.

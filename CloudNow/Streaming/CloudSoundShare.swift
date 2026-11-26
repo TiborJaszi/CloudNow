@@ -18,7 +18,7 @@ nonisolated final class CloudSoundShare: @unchecked Sendable {
 
     static let enabledDefaultsKey = "soundShare.enabled"
     static let addressDefaultsKey = "soundShare.address"
-    static let defaultAddress = "ws://192.168.31.204:8796/sound"
+    static let defaultAddress = "ws://192.168.31.95:8796/sound"
 
     static let sampleRate = 24000
     private static let ringCapacity = sampleRate                 // 1 s

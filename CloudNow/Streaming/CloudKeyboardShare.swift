@@ -23,7 +23,7 @@ final class CloudKeyboardShare {
 
     static let enabledDefaultsKey = "keyboardShare.enabled"
     static let addressDefaultsKey = "keyboardShare.address"
-    static let defaultAddress = "ws://192.168.31.204:8796/keys"
+    static let defaultAddress = "ws://192.168.31.95:8796/keys"
 
     private static let retryDelay: Duration = .seconds(2)
 
